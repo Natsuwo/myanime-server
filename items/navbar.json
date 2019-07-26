@@ -1,0 +1,117 @@
+{
+    "items": [
+        {
+            "icon": "dashboard",
+            "title": "Dashboard",
+            "to": "/admin"
+        },
+        {
+            "icon": "comment",
+            "title": "Comments",
+            "to": "/admin/comments"
+        }
+    ],
+    "multiItems": [
+        {
+            "icon": "movie",
+            "title": "Animes",
+            "items": [
+                {
+                    "icon": "details",
+                    "title": "All animes",
+                    "to": "/admin/anime/edit"
+                },
+                {
+                    "icon": "add",
+                    "title": "Add new (Anime)",
+                    "to": "/admin/anime/add-new"
+                }
+            ]
+        },
+        {
+            "icon": "video_library",
+            "title": "Episodes",
+            "items": [
+                {
+                    "icon": "details",
+                    "title": "All episodes",
+                    "to": "/admin/episode/edit"
+                },
+                {
+                    "icon": "add",
+                    "title": "Add new (Episode)",
+                    "to": "/admin/episode/add-new"
+                }
+            ]
+        },
+        {
+            "icon": "category",
+            "title": "Genres",
+            "items": [
+                {
+                    "icon": "details",
+                    "title": "All genres",
+                    "to": "/admin/genre/edit"
+                },
+                {
+                    "icon": "add",
+                    "title": "Add new (Genres)",
+                    "to": "/admin/genre/add-new"
+                }
+            ]
+        },
+        {
+            "icon": "domain",
+            "title": "Studios",
+            "items": [
+                {
+                    "icon": "details",
+                    "title": "All Studios",
+                    "to": "/admin/studio/edit"
+                },
+                {
+                    "icon": "add",
+                    "title": "Add new (Studios)",
+                    "to": "/admin/studio/add-new"
+                }
+            ]
+        },
+        {
+            "icon": "translate",
+            "title": "Languages",
+            "items": [
+                {
+                    "icon": "details",
+                    "title": "All Languages",
+                    "to": "/admin/language/edit"
+                },
+                {
+                    "icon": "add",
+                    "title": "Add new (Language)",
+                    "to": "/admin/language/add-new"
+                }
+            ]
+        },
+        {
+            "icon": "bubble_chart",
+            "title": "Seasons",
+            "items": [
+                {
+                    "icon": "details",
+                    "title": "All seasons",
+                    "to": "/admin/season/edit"
+                },
+                {
+                    "icon": "add",
+                    "title": "Add new (Seasons)",
+                    "to": "/admin/season/add-new"
+                }
+            ]
+        },
+        {
+            "icon": "settings",
+            "title": "Settings",
+            "items": []
+        }
+    ]
+}

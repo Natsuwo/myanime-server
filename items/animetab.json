@@ -1,0 +1,44 @@
+[
+    {
+        "text": "Title",
+        "value": "title",
+        "sortable": true,
+        "align": "left"
+    },
+    {
+        "text": "Thumbnail",
+        "sortable": false,
+        "align": "left"
+    },
+    {
+        "text": "Genres",
+        "sortable": false,
+        "align": "left"
+    },
+    {
+        "text": "Seasons",
+        "sortable": false,
+        "align": "left"
+    },
+    {
+        "text": "Studios",
+        "sortable": false,
+        "align": "left"
+    },
+    {
+        "text": "Rating",
+        "sortable": false,
+        "align": "left"
+    },
+    {
+        "text": "Last Update",
+        "value": "update_at",
+        "sortable": true,
+        "align": "left"
+    },
+    {
+        "text": "Controls",
+        "sortable": false,
+        "align": "right"
+    }
+]
