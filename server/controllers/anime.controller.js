@@ -6,7 +6,7 @@ module.exports = {
     async get(req, res) {
         try {
             var count = await Anime.countDocuments()
-            var animes = await Anime.find({}, { _id: 0, __v: 0 }).sort({ update_at: 1 })
+            var animes = await Anime.find({}, { _id: 0, __v: 0 })
             var animeMeta = []
             var terms = []
 
@@ -16,7 +16,7 @@ module.exports = {
                 var animeR = await AnimeR.find({ anime_id }, { _id: 0, __v: 0 })
 
                 for (let i = 0; i < animeR.length; i++) {
-                    var term = await Term.findOne({ term_id: animeR[i].meta_id }, { _id: 0, __v: 0 }).sort({ key: 1 })
+                    var term = await Term.findOne({ term_id: animeR[i].meta_id }, { _id: 0, __v: 0 })
                     terms.push(term)
                 }
 

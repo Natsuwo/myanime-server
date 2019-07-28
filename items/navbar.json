@@ -45,6 +45,22 @@
             ]
         },
         {
+            "icon": "g_translate",
+            "title": "Fansubs",
+            "items": [
+                {
+                    "icon": "details",
+                    "title": "All Fansubs",
+                    "to": "/admin/fansub/edit"
+                },
+                {
+                    "icon": "add",
+                    "title": "Add new (Fansub)",
+                    "to": "/admin/fansub/add-new"
+                }
+            ]
+        },
+        {
             "icon": "category",
             "title": "Genres",
             "items": [
@@ -77,7 +93,7 @@
             ]
         },
         {
-            "icon": "translate",
+            "icon": "language",
             "title": "Languages",
             "items": [
                 {

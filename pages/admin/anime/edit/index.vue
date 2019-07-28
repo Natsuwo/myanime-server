@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h1 class="py-3">{{title}} ({{count}})</h1>
+    <h1>{{title}} ({{count}})</h1>
+    <v-btn :to="'add-new'" color="primary">Add New</v-btn>
     <div class="text-xs-center">
       <!-- <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination> -->
       <div class="layout">

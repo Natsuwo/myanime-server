@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="py-3">{{title}} ({{count}})</h1>
+    <h1 class="py-3">{{ title }} ({{ count }})</h1>
     <v-btn :to="'add-new'" color="primary">Add New</v-btn>
     <!-- <div class="text-xs-center">
       <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination>
@@ -21,11 +21,28 @@
     </div>-->
     <v-data-table :items="terms" :headers="headers" class="elevation-1 my-table" hide-actions>
       <template v-slot:items="props">
-        <td>{{ props.item.key }}</td>
-        <td class="text-xs-right">{{ props.item.count }}</td>
+        <td>
+          <b>{{ props.item.name }}</b>
+          <v-tooltip v-if="props.item.trusted" top color="#1d850e">
+            <template v-slot:activator="{ on }">
+              <v-icon class="trusted-flag" v-on="on">check_circle</v-icon>
+            </template>
+            <span>Trusted</span>
+          </v-tooltip>
+        </td>
+        <td class="py-1">
+          <v-avatar>
+            <v-img width="50" height="50" :src="props.item.cover"></v-img>
+          </v-avatar>
+        </td>
+        <td class="py-1">
+          <v-img :src="props.item.banner"></v-img>
+        </td>
+        <td class="text-xs-right">{{props.item.followers}}</td>
+        <td class="text-xs-right">{{props.item.count}}</td>
         <td class="text-xs-right">
-          <nuxt-link class="text-control" :to="`/admin/studio/edit/${props.item.term_id}`">Edit</nuxt-link>|
-          <span class="delete-post" @click="deleteTerm(props.item)">Delete</span>
+          <nuxt-link class="text-control" :to="`/admin/fansub/edit/${props.item.fansub_id}`">Edit</nuxt-link>
+          <div class="delete-post" @click="removeFansub(props.item)">Delete</div>
         </td>
       </template>
     </v-data-table>
@@ -36,7 +53,7 @@
 </template>
 
 <script>
-import TermServices from "@/services/Term";
+import FansubServices from "@/services/Fansub";
 export default {
   head() {
     return {
@@ -45,21 +62,33 @@ export default {
   },
   data() {
     return {
-      title: "Studios",
+      title: "Fansubs",
       terms: [],
       count: 0,
       headers: [
         { text: "Name", value: "key", sortable: true, align: "left" },
-        { text: "Counts", value: "count", sortable: true, align: "right" },
+        { text: "cover", value: "cover", sortable: false, align: "left" },
+        { text: "banner", value: "banner", sortable: false, align: "left" },
+        {
+          text: "followers",
+          value: "followers",
+          sortable: true,
+          align: "right"
+        },
+        {
+          text: "Animes Translated",
+          value: "count",
+          sortable: true,
+          align: "right"
+        },
         { text: "Controls", sortable: false, align: "right" }
       ]
     };
   },
   async created() {
-    var type = "studio";
-    var data = await TermServices.get(type);
-    this.terms = data.data;
-    this.count = data.count;
+    var fansub = await FansubServices.get();
+    this.terms = fansub.data;
+    this.count = fansub.count;
   },
   methods: {
     async onPageChange() {},
@@ -75,14 +104,14 @@ export default {
       }
       return expired;
     },
-    async deleteTerm(item) {
+    async removeFansub(item) {
       const index = this.terms.indexOf(item);
       if (index >= 0) this.terms.splice(index, 1);
       var form = {
-        type: "studio",
-        term_id: item.term_id
+        fansub_id: item.fansub_id
       };
-      await TermServices.deleteTerm(form);
+      await FansubServices.removeFansub(form);
+      this.count--;
     }
   }
 };

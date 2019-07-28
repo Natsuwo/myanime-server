@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1 class="py-3">{{title}}</h1>
+    <h1 class="py-3">{{title}} ({{count}})</h1>
     <v-btn :to="'add-new'" color="primary">Add New</v-btn>
     <!-- <div class="text-xs-center">
       <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination>
@@ -24,7 +24,7 @@
         <td>{{ props.item.key }}</td>
         <td class="text-xs-right">{{ props.item.count }}</td>
         <td class="text-xs-right">
-          <nuxt-link class="text-control" :to="`/admin/genre/edit/${props.item.term_id}`">Edit</nuxt-link> |
+          <nuxt-link class="text-control" :to="`/admin/genre/edit/${props.item.term_id}`">Edit</nuxt-link>|
           <span class="delete-post" @click="deleteTerm(props.item)">Delete</span>
         </td>
       </template>
@@ -47,6 +47,7 @@ export default {
     return {
       title: "Genres",
       terms: [],
+      count: 0,
       headers: [
         { text: "Name", value: "key", sortable: true, align: "left" },
         { text: "Counts", value: "count", sortable: true, align: "right" },
@@ -55,8 +56,10 @@ export default {
     };
   },
   async created() {
-    var type = "genre"
-    this.terms = (await TermServices.get(type)).data;
+    var type = "genre";
+    var data = await TermServices.get(type);
+    this.terms = data.data;
+    this.count = data.count;
   },
   methods: {
     async onPageChange() {},
@@ -79,7 +82,7 @@ export default {
         type: "genre",
         term_id: item.term_id
       };
-      await TermServices.deleteTerm(form)
+      await TermServices.deleteTerm(form);
     }
   }
 };

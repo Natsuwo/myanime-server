@@ -1,12 +1,12 @@
 <template>
   <v-autocomplete
-    v-model="languages"
-    :items="dataLanguages"
+    v-model="type"
+    :items="dataType"
     chips
-    label="Languages"
-    item-text="key"
-    item-value="term_id"
-    multiple
+    label="Type"
+    item-text="name"
+    item-value="name"
+    hide-selected
   >
     <template v-slot:selection="data">
       <v-chip
@@ -14,7 +14,7 @@
         close
         class="chip--select-multi"
         @input="remove(data.item)"
-      >{{ data.item.key }}{{ selected(languages) }}</v-chip>
+      >{{ data.item.name }}{{ selected(type) }}</v-chip>
     </template>
     <template v-slot:item="data">
       <template v-if="typeof data.item !== 'object'">
@@ -29,25 +29,27 @@
   </v-autocomplete>
 </template>
 <script>
-import TermServices from "@/services/Term";
+import Type from "@/items/episode-type.json";
 export default {
+  props: ["data"],
   data() {
     return {
-      languages: [],
-      dataLanguages: []
+      type: [],
+      dataType: Type
     };
   },
-  async created() {
-    var type = "language";
-    this.dataLanguages = (await TermServices.get(type)).data;
-  },
+  async created() {},
   methods: {
     remove(item) {
-      const index = this.languages.indexOf(item.name);
-      if (index >= 0) this.languages.splice(index, 1);
+      this.type = [];
     },
     selected(data) {
-      this.$emit("languageEmit", data);
+      this.$emit("episodeTypeEmit", data);
+    }
+  },
+  watch: {
+    data() {
+      this.type = this.data;
     }
   }
 };

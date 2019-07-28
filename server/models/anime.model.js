@@ -11,6 +11,10 @@ const animeSchema = new mongoose.Schema({
     status: String,
     premiered: String,
     thumbnail: String,
+    followers: {
+        type: Number,
+        default: 0
+    },
     view_id: {
         type: String,
         index: { unique: true }

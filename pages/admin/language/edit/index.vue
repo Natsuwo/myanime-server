@@ -25,9 +25,8 @@
         <td>
           <v-img class="term-flag" :src="props.item.value"></v-img>
         </td>
-        <td class="text-xs-right">{{ props.item.count }}</td>
         <td class="text-xs-right">
-          <nuxt-link class="text-control" :to="`/admin/language/edit/${props.item.term_id}`">Edit</nuxt-link>|
+          <nuxt-link class="text-control" :to="`/admin/language/edit/${props.item.term_id}`">Edit</nuxt-link>
           <span class="delete-post" @click="deleteTerm(props.item)">Delete</span>
         </td>
       </template>
@@ -54,14 +53,15 @@ export default {
       headers: [
         { text: "Name", value: "key", sortable: true, align: "left" },
         { text: "Flag", value: "value", sortable: true, align: "left" },
-        { text: "Counts", value: "count", sortable: true, align: "right" },
         { text: "Controls", sortable: false, align: "right" }
       ]
     };
   },
   async created() {
     var type = "language";
-    this.terms = (await TermServices.get(type)).data;
+    var data = await TermServices.get(type);
+    this.terms = data.data
+    this.count = data.count
   },
   methods: {
     async onPageChange() {},
@@ -85,6 +85,7 @@ export default {
         term_id: item.term_id
       };
       await TermServices.deleteTerm(form);
+      this.count--
     }
   }
 };

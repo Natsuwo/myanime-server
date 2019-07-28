@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h1 class="py-3">{{title}}</h1>
+    <h1>{{title}} ({{count}})</h1>
+    <v-btn :to="'add-new'" color="primary">Add New</v-btn>
     <div class="text-xs-center">
       <!-- <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination> -->
       <div class="layout">
@@ -20,14 +21,18 @@
     </div>
     <v-data-table :items="episodes" :headers="headers" class="elevation-1 my-table" hide-actions>
       <template v-slot:items="props">
-        <td>{{ props.item.title }}</td>
+        <td>{{ props.item.anime_title }}</td>
         <td>{{ props.item.number }}</td>
-        <td>{{ getTime(props.item.update_at) }}</td>
-        <td>{{ props.item.anime_id }}</td>
-        <td>...</td>
+        <td>{{ props.item.title }}</td>
+        <td>{{ props.item.type }}</td>
+        <td>{{ props.item.audio }}</td>
+        <td>{{ props.item.subtitle }}</td>
+        <td>{{ props.item.fansub }}</td>
+        <td>{{ getTime(props.item.updated_at) }}</td>
         <td class="text-xs-right">{{props.item.views}}</td>
         <td class="text-xs-right">
-          <nuxt-link class="text-control" :to="`/admin/users/${props.item.userId}/edit`">Edit</nuxt-link>
+          <nuxt-link class="text-control" :to="`/admin/episode/edit/${props.item.episode_id}`">Edit</nuxt-link>
+          <div class="delete-post" @click="removeEpisode(props.item)">Delete</div>
         </td>
       </template>
     </v-data-table>
@@ -38,7 +43,7 @@
 </template>
 
 <script>
-import EpisodeSerivce from "@/services/Episode";
+import EpisodeServices from "@/services/Episode";
 export default {
   head() {
     return {
@@ -49,25 +54,30 @@ export default {
     return {
       title: "Episodes",
       episodes: [],
+      count: 0,
       headers: [
-        { text: "Title", value: "title", sortable: true, align: "left" },
-        { text: "Number", value: "number", sortable: false, align: "left" },
-        { text: "Date", value: "update_at", sortable: false, align: "left" },
+        { text: "Anime", value: "anime_title", sortable: true, align: "left" },
+        { text: "Episode", sortable: false, align: "left" },
+        { text: "Title", value: "title", sortable: false, align: "left" },
+        { text: "Type", sortable: false, align: "left" },
+        { text: "Audio", sortable: false, align: "left" },
+        { text: "Subtitle", sortable: false, align: "left" },
+        { text: "Fansub", sortable: false, align: "left" },
         {
-          text: "In Anime",
-          value: "episode_id",
-          sortable: false,
+          text: "Last Update",
+          value: "updated_at",
+          sortable: true,
           align: "left"
         },
-        { text: "Type", sortable: false, align: "left" },
         { text: "Views", value: "views", sortable: true, align: "right" },
         { text: "Controls", sortable: false, align: "right" }
       ]
     };
   },
   async created() {
-    var episodes = await EpisodeSerivce.get();
+    var episodes = await EpisodeServices.get();
     this.episodes = episodes.data;
+    this.count = episodes.count
   },
   methods: {
     async onPageChange() {},
@@ -82,6 +92,15 @@ export default {
         expired = "Never";
       }
       return expired;
+    },
+    async removeEpisode(item) {
+      const index = this.episodes.indexOf(item);
+      if (index >= 0) this.episodes.splice(index, 1);
+      var form = {
+        anime_id: item.anime_id,
+        episode_id: item.episode_id
+      }
+      await EpisodeServices.removeEpisode(form)
     }
   }
 };

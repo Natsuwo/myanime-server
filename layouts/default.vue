@@ -55,4 +55,9 @@ export default {
 .term-flag {
   width: 21px;
 }
+.trusted-flag {
+  font-size: 14px!important;
+  user-select: none;
+  color: #1da1f2!important;
+}
 </style>

@@ -8,7 +8,8 @@ module.exports = {
                 var { type } = req.query
                 var data = []
                 var count = 0
-                var terms = await Term.find({ type }, { _id: 0, __v: 0 })
+                var countAll = await Term.countDocuments({ type })
+                var terms = await Term.find({ type }, { _id: 0, __v: 0 }).sort({ key: 1 })
                 for (let term of terms) {
                     count = 0
                     var meta_id = term.term_id
@@ -18,7 +19,7 @@ module.exports = {
                     data.push(term)
                 }
 
-                return res.send({ success: true, data })
+                return res.send({ success: true, count: countAll, data })
             }
             var terms = await Term.findOne({ type, term_id }, { _id: 0, __v: 0 })
             return res.send({ success: true, data: terms })
