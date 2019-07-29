@@ -2,28 +2,16 @@
   <v-layout row wrap justify-center align-center>
     <v-snackbar v-model="snackbar" :timeout="4000" top :color="messages.success ? 'green' : 'red'">
       <span>{{messages.success ? messages.message : messages.error}}</span>
-      <v-btn flat @click="snackbar = false" color="white">Close</v-btn>
+      <v-btn text @click="snackbar = false" color="white">Close</v-btn>
     </v-snackbar>
-    <v-flex xs12 md8 md6>
+    <v-flex xs12 md10 md8>
       <v-card>
         <v-toolbar dark color="primary">
           <v-toolbar-title>{{title}}</v-toolbar-title>
         </v-toolbar>
         <v-card-text>
           <img :src="imageUrl" height="150" v-if="imageUrl" />
-          <v-text-field
-            label="Thumbnail"
-            @click="pickFile"
-            v-model="imageName"
-            prepend-icon="attach_file"
-          ></v-text-field>
-          <input
-            type="file"
-            style="display: none"
-            ref="image"
-            accept="image/*"
-            @change="onFilePicked"
-          />
+          <v-file-input v-model="file" type="file" accept="image/*" label="Thumbnail"></v-file-input>
           <v-text-field v-model="ro_title" label="Romaji Title"></v-text-field>
           <v-text-field v-model="en_title" label="English Title"></v-text-field>
           <v-text-field v-model="jp_title" label="Japan Title"></v-text-field>
@@ -79,13 +67,12 @@ export default {
       genres: [],
       studios: [],
       season: [],
+      file: [],
       description: "",
       title: "Add new (Anime)",
-      imageName: "",
-      imageUrl: "",
-      imageFile: "",
       snackbar: false,
-      messages: ""
+      messages: "",
+      imageUrl: ""
     };
   },
   async created() {},
@@ -94,7 +81,7 @@ export default {
       var formData = new FormData();
       var terms = this.genres.concat(this.studios, this.season);
 
-      formData.append("thumbnail", this.imageFile);
+      formData.append("thumbnail", this.file);
       formData.append("title", this.ro_title);
       formData.append("en", this.en_title);
       formData.append("jp", this.jp_title);
@@ -114,28 +101,18 @@ export default {
           });
         }, 1000);
       }
-    },
-    pickFile() {
-      this.$refs.image.click();
-    },
-    onFilePicked(e) {
-      const files = e.target.files;
-      if (files[0] !== undefined) {
-        this.imageName = files[0].name;
-        if (this.imageName.lastIndexOf(".") <= 0) {
-          return;
-        }
+    }
+  },
+  watch: {
+    file(file) {
+      if (file) {
         const fr = new FileReader();
-        fr.readAsDataURL(files[0]);
+        fr.readAsDataURL(file);
         fr.addEventListener("load", () => {
           this.imageUrl = fr.result;
-          this.imageFile = files[0]; // this is an image file that can be sent to server...
         });
-      } else {
-        this.imageName = "";
-        this.imageFile = "";
-        this.imageUrl = "";
       }
+      this.imageUrl = "";
     }
   }
 };

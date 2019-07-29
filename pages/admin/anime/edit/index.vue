@@ -2,7 +2,7 @@
   <div>
     <h1>{{title}} ({{count}})</h1>
     <v-btn :to="'add-new'" color="primary">Add New</v-btn>
-    <div class="text-xs-center">
+    <div class="text-center">
       <!-- <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination> -->
       <div class="layout">
         <v-spacer></v-spacer>
@@ -20,28 +20,26 @@
       </div>
     </div>
     <v-data-table
+      hide-default-footer
       :items="animes"
+      sort-by="update_at"
+      sort-desc
       :headers="headers"
-      multi-sort
       class="elevation-1 my-table"
     >
-      <template v-slot:items="props">
-        <td>{{ props.item.title }}</td>
-        <td>
-          <v-img width="75" :src="props.item.thumbnail"></v-img>
-        </td>
-        <td>{{ getTerms(props.item, 'genre') }}</td>
-        <td>{{ getTerms(props.item, 'season') }}</td>
-        <td>{{ getTerms(props.item, 'studio') }}</td>
-        <td>{{ props.item.rating }}</td>
-        <td>{{ getTime(props.item.update_at) }}</td>
-        <td class="text-xs-right">
-          <nuxt-link class="text-control" :to="`/admin/anime/edit/${props.item.anime_id}`">Edit</nuxt-link>
-          <div class="delete-post" @click="deletePost(props.item)">Delete</div>
-        </td>
+      <template v-slot:item.thumbnail="{ item }">
+        <v-img width="75" :src="item.thumbnail"></v-img>
+      </template>
+      <template v-slot:item.genre="{ item }">{{ getTerms(item, 'genre') }}</template>
+      <template v-slot:item.season="{ item }">{{ getTerms(item, 'season') }}</template>
+      <template v-slot:item.studio="{ item }">{{ getTerms(item, 'studio') }}</template>
+      <template v-slot:item.update_at="{ item }">{{ getTime(item.update_at) }}</template>
+      <template v-slot:item.control="{ item }">
+        <v-icon @click="editAnime(item.anime_id)">mdi-pencil</v-icon>
+        <v-icon @click="deleteAnime(item)">mdi-delete</v-icon>
       </template>
     </v-data-table>
-    <div class="text-xs-center pt-4">
+    <div class="text-center pt-4">
       <!-- <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination> -->
     </div>
   </div>
@@ -63,7 +61,8 @@ export default {
       genres: [],
       season: [],
       count: 0,
-      headers: AnimeItems
+      headers: AnimeItems,
+      search: ""
     };
   },
   async created() {
@@ -92,14 +91,17 @@ export default {
         .map(x => x.key)
         .join(", ");
     },
-    async deletePost(item) {
+    async deleteAnime(item) {
       const index = this.animes.indexOf(item);
       if (index >= 0) this.animes.splice(index, 1);
       var form = {
         anime_id: item.anime_id
       };
       await AnimeServices.removeAnime(form);
-      this.count--
+      this.count--;
+    },
+    editAnime(item) {
+      this.$router.push({ path: `edit/${item}` });
     }
   }
 };

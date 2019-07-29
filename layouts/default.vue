@@ -1,14 +1,15 @@
 <template>
   <v-app dark>
     <v-layout v-if="$store.state.loading === true" row wrap justify-center align-center>
-      <v-flex xs12 class="text-xs-center">
+      <v-flex xs12 class="text-center">
         <v-progress-circular indeterminate color="purple"></v-progress-circular>
       </v-flex>
     </v-layout>
     <template v-if="$store.state.loading === false">
-      <NavBar />
+      <NavDrawer :miniBind="mini" :drawerBind="drawer"/>
+      <NavBar @miniEmit="(data) => mini = data" @drawerEmit="(data) => drawer = data"/>
       <v-content>
-        <v-container>
+        <v-container grid-list-xs>
           <nuxt />
         </v-container>
       </v-content>
@@ -18,10 +19,18 @@
 
 <script>
 import NavBar from "@/components/main/default/NavBar";
+import NavDrawer from "@/components/main/default/NavDrawer";
 import Authentication from "@/services/Authentication";
 export default {
+  data() {
+    return {
+      mini: false,
+      drawer: true
+    }
+  },
   components: {
-    NavBar
+    NavBar,
+    NavDrawer
   },
   async mounted() {
     try {
@@ -56,8 +65,8 @@ export default {
   width: 21px;
 }
 .trusted-flag {
-  font-size: 14px!important;
+  font-size: 14px !important;
   user-select: none;
-  color: #1da1f2!important;
+  color: #1da1f2 !important;
 }
 </style>

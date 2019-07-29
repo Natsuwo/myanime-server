@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 class="py-3">{{title}}</h1>
-    <div class="text-xs-center">
+    <div class="text-center">
       <!-- <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination> -->
       <div class="layout">
         <v-spacer></v-spacer>
@@ -18,7 +18,7 @@
         <v-spacer></v-spacer>
       </div>
     </div>
-    <v-data-table :items="comments" :headers="headers" class="elevation-1 my-table" hide-actions>
+    <v-data-table :items="comments" :headers="headers" class="elevation-1 my-table" hide-default-footer>
       <template v-slot:items="props">
         <td>{{ props.item.user_id }}</td>
         <td>{{ props.item.comment }}</td>
@@ -29,7 +29,7 @@
         </td>
       </template>
     </v-data-table>
-    <div class="text-xs-center pt-4">
+    <div class="text-center pt-4">
       <!-- <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination> -->
     </div>
   </div>

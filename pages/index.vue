@@ -2,13 +2,13 @@
   <v-layout row wrap justify-center align-center>
     <v-snackbar v-model="snackbar" :timeout="4000" top color="red">
       <span>{{message}}</span>
-      <v-btn flat color="white" @click="snackbar = false">Close</v-btn>
+      <v-btn text color="white" @click="snackbar = false">Close</v-btn>
     </v-snackbar>
     <v-flex xs6>
       <h1>Backend Myanime</h1>
       <v-form @keyup.native.enter="submit">
-        <v-text-field v-model="email" label="email" prepend-icon="person"></v-text-field>
-        <v-text-field v-model="password" type="password" label="Password" prepend-icon="lock"></v-text-field>
+        <v-text-field v-model="email" label="email" prepend-icon="mdi-account"></v-text-field>
+        <v-text-field v-model="password" type="password" label="Password" prepend-icon="mdi-lock"></v-text-field>
         <v-btn color="green" @click="submit">Login</v-btn>
       </v-form>
     </v-flex>

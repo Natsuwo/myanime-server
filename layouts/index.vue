@@ -1,12 +1,12 @@
 <template>
   <v-app dark style="background: #2d3a4b;">
     <v-layout v-if="$store.state.loading === true" row wrap justify-center align-center>
-      <v-flex xs12 class="text-xs-center">
+      <v-flex xs12 class="text-center">
         <v-progress-circular indeterminate color="purple"></v-progress-circular>
       </v-flex>
     </v-layout>
     <v-layout v-if="$store.state.loading === false" row wrap justify-center align-center>
-      <v-content class="text-xs-center">
+      <v-content class="text-center">
         <v-container>
           <nuxt />
         </v-container>

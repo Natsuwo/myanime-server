@@ -2,22 +2,22 @@
   <v-layout row wrap justify-center align-center>
     <v-snackbar v-model="snackbar" :timeout="4000" top :color="messages.success ? 'green' : 'red'">
       <span>{{messages.success ? messages.message : messages.error}}</span>
-      <v-btn flat @click="snackbar = false" color="white">Close</v-btn>
+      <v-btn text @click="snackbar = false" color="white">Close</v-btn>
     </v-snackbar>
-    <v-flex xs12 md8 md6>
+    <v-flex xs12 md10 md8>
       <v-card>
         <v-toolbar dark color="primary">
           <v-toolbar-title>{{title}}</v-toolbar-title>
         </v-toolbar>
         <v-form enctype="multipart/form-data">
           <v-card-text>
-            <v-text-field v-model="key" label="Name" prepend-icon="title"></v-text-field>
+            <v-text-field v-model="key" label="Name" prepend-icon="mdi-format-title"></v-text-field>
             <img :src="imageUrl" height="150" v-if="imageUrl" />
             <v-text-field
               label="Select Image"
               @click="pickFile"
               v-model="imageName"
-              prepend-icon="attach_file"
+              prepend-icon="mdi-attachment"
             ></v-text-field>
             <input
               type="file"
@@ -28,7 +28,7 @@
             />
             <v-textarea
               v-model="description"
-              prepend-icon="description"
+              prepend-icon="mdi-file-document-edit"
               name="input-7-1"
               label="Descriptions"
             ></v-textarea>

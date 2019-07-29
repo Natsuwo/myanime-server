@@ -1,52 +1,53 @@
 <template>
   <div>
-    <h1 class="py-3">{{ title }} ({{ count }})</h1>
+    <h1>{{ title }} ({{ count }})</h1>
     <v-btn :to="'add-new'" color="primary">Add New</v-btn>
-    <!-- <div class="text-xs-center">
-      <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination>
+    <div class="text-center">
+      <!-- <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination> -->
       <div class="layout">
         <v-spacer></v-spacer>
         <v-flex xs6 pt-3>
-          <v-text-field
+          <!-- <v-text-field
             @input="searchTimeOut(onPageChange)"
             v-model="search"
             solo-inverted
             clearable
             label="Search drive ID or file name (you can search a multi value)"
             append-icon="search"
-          ></v-text-field>
+          ></v-text-field>-->
         </v-flex>
         <v-spacer></v-spacer>
       </div>
-    </div>-->
-    <v-data-table :items="terms" :headers="headers" class="elevation-1 my-table" hide-actions>
-      <template v-slot:items="props">
-        <td>
-          <b>{{ props.item.name }}</b>
-          <v-tooltip v-if="props.item.trusted" top color="#1d850e">
-            <template v-slot:activator="{ on }">
-              <v-icon class="trusted-flag" v-on="on">check_circle</v-icon>
-            </template>
-            <span>Trusted</span>
-          </v-tooltip>
-        </td>
-        <td class="py-1">
-          <v-avatar>
-            <v-img width="50" height="50" :src="props.item.cover"></v-img>
-          </v-avatar>
-        </td>
-        <td class="py-1">
-          <v-img :src="props.item.banner"></v-img>
-        </td>
-        <td class="text-xs-right">{{props.item.followers}}</td>
-        <td class="text-xs-right">{{props.item.count}}</td>
-        <td class="text-xs-right">
-          <nuxt-link class="text-control" :to="`/admin/fansub/edit/${props.item.fansub_id}`">Edit</nuxt-link>
-          <div class="delete-post" @click="removeFansub(props.item)">Delete</div>
-        </td>
+    </div>
+    <v-data-table
+      :items="terms"
+      :headers="headers"
+      class="elevation-1 my-table"
+      hide-default-footer
+    >
+      <template v-slot:item.name="{ item }">
+        <b>{{ item.name }}</b>
+        <v-tooltip v-if="item.trusted" top color="#1d850e">
+          <template v-slot:activator="{ on }">
+            <v-icon class="trusted-flag" v-on="on">mdi-check-circle</v-icon>
+          </template>
+          <span>Trusted</span>
+        </v-tooltip>
+      </template>
+      <template v-slot:item.cover="{ item }">
+        <v-avatar>
+          <v-img width="50" height="50" :src="item.cover"></v-img>
+        </v-avatar>
+      </template>
+      <template v-slot:item.banner="{ item }">
+        <v-img class="my-1" width="175px" :src="item.banner"></v-img>
+      </template>
+      <template v-slot:item.control="{ item }">
+        <v-icon @click="editFansub(item.fansub_id)">mdi-pencil</v-icon>
+        <v-icon @click="removeFansub(item)">mdi-delete</v-icon>
       </template>
     </v-data-table>
-    <div class="text-xs-center pt-4">
+    <div class="text-center pt-4">
       <!-- <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination> -->
     </div>
   </div>
@@ -66,7 +67,7 @@ export default {
       terms: [],
       count: 0,
       headers: [
-        { text: "Name", value: "key", sortable: true, align: "left" },
+        { text: "Name", value: "name", sortable: true, align: "left" },
         { text: "cover", value: "cover", sortable: false, align: "left" },
         { text: "banner", value: "banner", sortable: false, align: "left" },
         {
@@ -81,7 +82,7 @@ export default {
           sortable: true,
           align: "right"
         },
-        { text: "Controls", sortable: false, align: "right" }
+        { text: "Controls", value: "control", sortable: false, align: "right" }
       ]
     };
   },
@@ -112,6 +113,9 @@ export default {
       };
       await FansubServices.removeFansub(form);
       this.count--;
+    },
+    async editFansub(id) {
+      this.$router.push({ path: `edit/${id}` });
     }
   }
 };

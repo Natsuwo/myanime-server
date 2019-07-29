@@ -10,8 +10,8 @@
     disabled
   >
     <template v-slot:selection="data">
-      <v-chip :selected="data.selected" class="chip--select-multi">
-        <v-avatar>
+      <v-chip :input-value="data.selected" class="chip--select-multi">
+        <v-avatar left>
           <v-img :src="data.item.thumbnail"></v-img>
         </v-avatar>
         {{ data.item.title }}{{ selected(anime) }}

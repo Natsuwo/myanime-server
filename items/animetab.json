@@ -7,26 +7,31 @@
     },
     {
         "text": "Thumbnail",
+        "value": "thumbnail",
         "sortable": false,
         "align": "left"
     },
     {
         "text": "Genres",
+        "value": "genre",
         "sortable": false,
         "align": "left"
     },
     {
         "text": "Seasons",
+        "value": "season",
         "sortable": false,
         "align": "left"
     },
     {
         "text": "Studios",
+        "value": "studio",
         "sortable": false,
         "align": "left"
     },
     {
         "text": "Rating",
+        "value": "rating",
         "sortable": false,
         "align": "left"
     },
@@ -38,6 +43,7 @@
     },
     {
         "text": "Controls",
+        "value": "control",
         "sortable": false,
         "align": "right"
     }

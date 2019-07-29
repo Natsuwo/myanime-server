@@ -1,84 +1,47 @@
 <template>
-  <no-ssr>
-    <div class="toolbar">
-      <v-toolbar app dark>
-        <v-btn icon v-if="mini" @click="mini = !mini">
-          <v-icon>chevron_right</v-icon>
+  <v-app-bar fixed app collapse-on-scroll dark flat>
+    <v-btn v-if="$vuetify.breakpoint.smAndUp" icon @click.stop="miniVariant">
+      <v-icon>mdi-{{ `chevron-${mini ? 'right' : 'left'}` }}</v-icon>
+    </v-btn>
+    <v-btn icon v-if="$vuetify.breakpoint.xsOnly" @click="drawerClose">
+      <v-icon>mdi-{{drawer ? 'close' : 'plus' }}</v-icon>
+    </v-btn>
+    <v-toolbar-title class="text-uppercase grey--text">
+      <nuxt-link to="/">
+        <span class="font-weight-light">{{title}}</span>
+      </nuxt-link>
+    </v-toolbar-title>
+    <v-spacer />
+    <v-menu
+      transition="slide-x-transition"
+      offset-y
+      bottom
+      left
+      :nudge-width="100"
+      :nudge-bottom="10"
+    >
+      <template v-slot:activator="{ on }">
+        <v-btn dark icon v-on="on">
+          <v-avatar>
+            <v-img src="https://i.imgur.com/N5SvkzK.jpg"></v-img>
+          </v-avatar>
         </v-btn>
-        <v-btn icon v-else @click="mini = !mini">
-          <v-icon>chevron_left</v-icon>
-        </v-btn>
-        <v-btn icon v-if="$vuetify.breakpoint.smAndDown" @click="drawer = !drawer">
-          <v-icon>close</v-icon>
-        </v-btn>
-        <v-toolbar-title class="text-uppercase grey--text">
-          <nuxt-link to="/">
-            <span class="font-weight-light">{{title}}</span>
-          </nuxt-link>
-        </v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-menu
-          transition="slide-x-transition"
-          offset-y
-          bottom
-          left
-          :nudge-width="100"
-          :nudge-bottom="10"
-        >
-          <template v-slot:activator="{ on }">
-            <v-btn dark icon v-on="on">
-              <v-icon>more_vert</v-icon>
-            </v-btn>
-          </template>
-          <v-list>
-            <v-list-tile>
-              <v-btn flat block to="/user/profile">
-                <v-icon class="pr-2">person</v-icon>Profile
-              </v-btn>
-            </v-list-tile>
+      </template>
+      <v-list>
+        <v-list-item>
+          <v-btn text block to="/user/profile">
+            <v-icon class="pr-2">mdi-account</v-icon>Profile
+          </v-btn>
+        </v-list-item>
 
-            <v-list-tile>
-              <v-btn @click="logout" flat block>
-                <v-icon class="pr-2">exit_to_app</v-icon>Logout
-              </v-btn>
-            </v-list-tile>
-          </v-list>
-        </v-menu>
-      </v-toolbar>
-      <!-- Navigation -->
-      <v-navigation-drawer stateless app :mini-variant="mini" v-model="drawer" dark>
-        <v-list class="pt-0" dense>
-          <!-- Single Items -->
-          <v-list-tile v-for="item in items" :key="item.title" :to="item.to" exact>
-            <v-list-tile-action>
-              <v-icon>{{item.icon}}</v-icon>
-            </v-list-tile-action>
-            <v-list-tile-content>
-              <v-list-tile-title>{{item.title}}</v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
-          <!-- Multi Items -->
-          <v-list-group
-            :prepend-icon="multiItem.icon"
-            v-for="multiItem in multiItems"
-            :key="multiItem.title"
-          >
-            <template v-slot:activator>
-              <v-list-tile>
-                <v-list-tile-title>{{multiItem.title}}</v-list-tile-title>
-              </v-list-tile>
-            </template>
-            <v-list-tile v-for="child in multiItem.items" :key="child.title" :to="child.to" exact>
-              <v-list-tile-action>
-                <v-icon>{{child.icon}}</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-title>{{child.title}}</v-list-tile-title>
-            </v-list-tile>
-          </v-list-group>
-        </v-list>
-      </v-navigation-drawer>
-    </div>
-  </no-ssr>
+        <v-list-item>
+          <v-btn @click="logout" text block>
+            <v-icon class="pr-2">mdi-exit-to-app</v-icon>Logout
+          </v-btn>
+        </v-list-item>
+      </v-list>
+    </v-menu>
+  </v-app-bar>
 </template>
 <script>
 import Items from "@/items/navbar.json";
@@ -90,8 +53,12 @@ export default {
       drawer: true,
       items: [],
       multiItems: [],
-      mini: true
+      mini: true,
+      scroll: true
     };
+  },
+  created() {
+    this.$emit("miniEmit", this.mini);
   },
   async mounted() {
     this.items = Items.items;
@@ -102,6 +69,17 @@ export default {
       var logout = await Authentication.logout();
       this.$store.commit("logout", true);
       this.$router.push({ path: "/" });
+    },
+    miniVariant() {
+      this.mini = !this.mini;
+      this.$emit("miniEmit", this.mini);
+    },
+    drawerClose() {
+      this.drawer = !this.drawer;
+      this.$emit("drawerEmit", this.drawer);
+      if (this.mini === false) {
+        this.$emit("miniEmit", (this.mini = true));
+      }
     }
   }
 };

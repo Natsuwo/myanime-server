@@ -1,131 +1,131 @@
 {
     "items": [
         {
-            "icon": "dashboard",
+            "icon": "mdi-view-dashboard",
             "title": "Dashboard",
             "to": "/admin"
         },
         {
-            "icon": "comment",
+            "icon": "mdi-comment-text-outline",
             "title": "Comments",
             "to": "/admin/comments"
         }
     ],
     "multiItems": [
         {
-            "icon": "movie",
+            "icon": "mdi-movie",
             "title": "Animes",
             "items": [
                 {
-                    "icon": "details",
+                    "icon": "mdi-details",
                     "title": "All animes",
                     "to": "/admin/anime/edit"
                 },
                 {
-                    "icon": "add",
+                    "icon": "mdi-note-plus",
                     "title": "Add new (Anime)",
                     "to": "/admin/anime/add-new"
                 }
             ]
         },
         {
-            "icon": "video_library",
+            "icon": "mdi-library-video",
             "title": "Episodes",
             "items": [
                 {
-                    "icon": "details",
+                    "icon": "mdi-details",
                     "title": "All episodes",
                     "to": "/admin/episode/edit"
                 },
                 {
-                    "icon": "add",
+                    "icon": "mdi-note-plus",
                     "title": "Add new (Episode)",
                     "to": "/admin/episode/add-new"
                 }
             ]
         },
         {
-            "icon": "g_translate",
+            "icon": "mdi-translate",
             "title": "Fansubs",
             "items": [
                 {
-                    "icon": "details",
+                    "icon": "mdi-details",
                     "title": "All Fansubs",
                     "to": "/admin/fansub/edit"
                 },
                 {
-                    "icon": "add",
+                    "icon": "mdi-note-plus",
                     "title": "Add new (Fansub)",
                     "to": "/admin/fansub/add-new"
                 }
             ]
         },
         {
-            "icon": "category",
+            "icon": "mdi-tag",
             "title": "Genres",
             "items": [
                 {
-                    "icon": "details",
+                    "icon": "mdi-details",
                     "title": "All genres",
                     "to": "/admin/genre/edit"
                 },
                 {
-                    "icon": "add",
+                    "icon": "mdi-note-plus",
                     "title": "Add new (Genres)",
                     "to": "/admin/genre/add-new"
                 }
             ]
         },
         {
-            "icon": "domain",
+            "icon": "mdi-youtube-creator-studio",
             "title": "Studios",
             "items": [
                 {
-                    "icon": "details",
+                    "icon": "mdi-details",
                     "title": "All Studios",
                     "to": "/admin/studio/edit"
                 },
                 {
-                    "icon": "add",
+                    "icon": "mdi-note-plus",
                     "title": "Add new (Studios)",
                     "to": "/admin/studio/add-new"
                 }
             ]
         },
         {
-            "icon": "language",
+            "icon": "mdi-google-translate",
             "title": "Languages",
             "items": [
                 {
-                    "icon": "details",
+                    "icon": "mdi-details",
                     "title": "All Languages",
                     "to": "/admin/language/edit"
                 },
                 {
-                    "icon": "add",
+                    "icon": "mdi-note-plus",
                     "title": "Add new (Language)",
                     "to": "/admin/language/add-new"
                 }
             ]
         },
         {
-            "icon": "bubble_chart",
+            "icon": "mdi-yin-yang",
             "title": "Seasons",
             "items": [
                 {
-                    "icon": "details",
+                    "icon": "mdi-details",
                     "title": "All seasons",
                     "to": "/admin/season/edit"
                 },
                 {
-                    "icon": "add",
+                    "icon": "mdi-note-plus",
                     "title": "Add new (Seasons)",
                     "to": "/admin/season/add-new"
                 }
             ]
         },
         {
-            "icon": "settings",
+            "icon": "mdi-settings",
             "title": "Settings",
             "items": []
         }

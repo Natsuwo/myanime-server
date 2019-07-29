@@ -2,9 +2,9 @@
   <v-layout row wrap justify-center align-center>
     <v-snackbar v-model="snackbar" :timeout="4000" top :color="messages.success ? 'green' : 'red'">
       <span>{{messages.success ? messages.message : messages.error}}</span>
-      <v-btn flat @click="snackbar = false" color="white">Close</v-btn>
+      <v-btn text @click="snackbar = false" color="white">Close</v-btn>
     </v-snackbar>
-    <v-flex xs12 md8 md6>
+    <v-flex xs12 md10 md8>
       <v-card>
         <v-toolbar dark color="primary">
           <v-toolbar-title>{{title}}</v-toolbar-title>

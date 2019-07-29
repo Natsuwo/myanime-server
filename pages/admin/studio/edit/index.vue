@@ -2,34 +2,35 @@
   <div>
     <h1 class="py-3">{{title}} ({{count}})</h1>
     <v-btn :to="'add-new'" color="primary">Add New</v-btn>
-    <!-- <div class="text-xs-center">
-      <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination>
+    <div class="text-center">
+      <!-- <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination> -->
       <div class="layout">
         <v-spacer></v-spacer>
         <v-flex xs6 pt-3>
-          <v-text-field
+          <!-- <v-text-field
             @input="searchTimeOut(onPageChange)"
             v-model="search"
             solo-inverted
             clearable
             label="Search drive ID or file name (you can search a multi value)"
             append-icon="search"
-          ></v-text-field>
+          ></v-text-field>-->
         </v-flex>
         <v-spacer></v-spacer>
       </div>
-    </div>-->
-    <v-data-table :items="terms" :headers="headers" class="elevation-1 my-table" hide-actions>
-      <template v-slot:items="props">
-        <td>{{ props.item.key }}</td>
-        <td class="text-xs-right">{{ props.item.count }}</td>
-        <td class="text-xs-right">
-          <nuxt-link class="text-control" :to="`/admin/studio/edit/${props.item.term_id}`">Edit</nuxt-link>|
-          <span class="delete-post" @click="deleteTerm(props.item)">Delete</span>
-        </td>
+    </div>
+    <v-data-table
+      :items="terms"
+      :headers="headers"
+      class="elevation-1 my-table"
+      hide-default-footer
+    >
+      <template v-slot:item.control="{ item }">
+        <v-icon @click="editTerm(item.term_id)">mdi-pencil</v-icon>
+        <v-icon @click="deleteTerm(item)">mdi-delete</v-icon>
       </template>
     </v-data-table>
-    <div class="text-xs-center pt-4">
+    <div class="text-center pt-4">
       <!-- <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination> -->
     </div>
   </div>
@@ -51,7 +52,7 @@ export default {
       headers: [
         { text: "Name", value: "key", sortable: true, align: "left" },
         { text: "Counts", value: "count", sortable: true, align: "right" },
-        { text: "Controls", sortable: false, align: "right" }
+        { text: "Controls", value: "control", sortable: false, align: "right" }
       ]
     };
   },
@@ -83,6 +84,9 @@ export default {
         term_id: item.term_id
       };
       await TermServices.deleteTerm(form);
+    },
+    editTerm(id) {
+      this.$router.push({ path: `edit/${id}` });
     }
   }
 };

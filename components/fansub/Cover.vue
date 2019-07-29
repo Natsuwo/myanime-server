@@ -1,13 +1,7 @@
 <template>
   <div>
-    <img :src="imageUrl" height="150" v-if="imageUrl" />
-    <v-text-field
-      label="Select Cover"
-      @click="pickFile"
-      v-model="imageName"
-      prepend-icon="attach_file"
-    ></v-text-field>
-    <input type="file" style="display: none" ref="image" accept="image/*" @change="onFilePicked" />
+    <img @click="editImage = !editImage" :src="imageUrl" height="150" v-if="imageUrl" />
+    <v-file-input :disabled="editImage" v-model="cover" type="file" accept="image/*" label="Cover"></v-file-input>
   </div>
 </template>
 <script>
@@ -15,45 +9,40 @@ export default {
   props: ["data"],
   data() {
     return {
-      imageName: "",
-      imageUrl: "",
-      imageFile: ""
+      cover: [],
+      editImage: false,
+      imageUrl: ""
     };
-  },
-  methods: {
-    pickFile() {
-      this.$refs.image.click();
-    },
-    onFilePicked(e) {
-      const files = e.target.files;
-      if (files[0] !== undefined) {
-        this.imageName = files[0].name;
-        if (this.imageName.lastIndexOf(".") <= 0) {
-          return;
-        }
-        const fr = new FileReader();
-        fr.readAsDataURL(files[0]);
-        fr.addEventListener("load", () => {
-          this.imageUrl = fr.result;
-          this.imageFile = files[0];
-          this.$emit("fansubCoverEmit", files[0] || this.imageUrl);
-        });
-      } else {
-        this.imageName = "";
-        this.imageFile = "";
-        this.imageUrl = "";
-      }
-    }
   },
   watch: {
     data(val) {
       if (typeof val === "string") {
-        this.imageUrl = this.data;
-        this.imageName = this.data
-          .split("/upload/fansub/cover/")
-          .splice(1)
-          .join();
+        this.imageUrl = val;
+        this.cover = [
+          {
+            name: val
+              .split("/upload/fansub/cover/")
+              .splice(1)
+              .join()
+          }
+        ];
       }
+    },
+    cover(file) {
+      if (file && file.length === undefined) {
+        const fr = new FileReader();
+        fr.readAsDataURL(file);
+        fr.addEventListener("load", () => {
+          this.imageUrl = fr.result;
+          this.$emit("fansubCoverEmit", file || this.imageUrl);
+        });
+      }
+      if (!file) {
+        this.imageUrl = "";
+      }
+    },
+    imageUrl() {
+      this.editImage = true;
     }
   }
 };

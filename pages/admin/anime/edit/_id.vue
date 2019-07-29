@@ -2,35 +2,22 @@
   <v-layout row wrap justify-center align-center>
     <v-snackbar v-model="snackbar" :timeout="4000" top :color="messages.success ? 'green' : 'red'">
       <span>{{messages.success ? messages.message : messages.error}}</span>
-      <v-btn flat @click="snackbar = false" color="white">Close</v-btn>
+      <v-btn text @click="snackbar = false" color="white">Close</v-btn>
     </v-snackbar>
-    <v-flex xs12 md8 md6>
+    <v-flex xs12 md10 md8>
       <v-card>
         <v-toolbar dark color="primary">
           <v-toolbar-title>{{title}}</v-toolbar-title>
         </v-toolbar>
         <v-card-text>
-          <img
-            @click="editImage = !editImage"
-            :src="imageUrl"
-            height="150"
-            title="abc"
-            v-if="imageUrl"
-          />
-          <v-text-field
-            label="Thumbnail"
-            @click="pickFile"
-            v-model="imageName"
-            prepend-icon="attach_file"
+          <img @click="editImage = !editImage" :src="imageUrl" height="150" v-if="imageUrl" />
+          <v-file-input
             :disabled="editImage"
-          ></v-text-field>
-          <input
+            v-model="thumbnail"
             type="file"
-            style="display: none"
-            ref="image"
             accept="image/*"
-            @change="onFilePicked"
-          />
+            label="Thumbnail"
+          ></v-file-input>
           <v-text-field v-model="ro_title" label="Romaji Title"></v-text-field>
           <v-text-field v-model="en_title" label="English Title"></v-text-field>
           <v-text-field v-model="jp_title" label="Japan Title"></v-text-field>
@@ -44,7 +31,7 @@
           <v-textarea v-model="description" name="input-7-1" label="Descriptions"></v-textarea>
           <v-divider></v-divider>
         </v-card-text>
-        <v-layout row wrap px-3>
+        <v-card-actions>
           <v-switch
             v-model="autoUpdate"
             :disabled="isUpdating"
@@ -55,11 +42,11 @@
           ></v-switch>
           <v-spacer></v-spacer>
           <v-btn :disabled="autoUpdate" :loading="isUpdating" color="primary" @click="sumbit(true)">
-            <span v-if="autoUpdate">{{ countDown }}</span>
-            <v-icon left>update</v-icon>Update now
+            <span class="pr-1" v-if="autoUpdate">{{ countDown }}</span>
+            <v-icon left>mdi-update</v-icon>Update now
           </v-btn>
           <v-btn color="error" @click="deletePost()">Delete</v-btn>
-        </v-layout>
+        </v-card-actions>
       </v-card>
     </v-flex>
   </v-layout>
@@ -98,18 +85,17 @@ export default {
       studios: [],
       rating: [],
       season: [],
+      thumbnail: [],
       description: "",
       title: `Edit ${this.ro_title}`,
-      imageName: "",
       imageUrl: "",
-      imageFile: "",
+      imageName: "",
       editImage: false,
       snackbar: false,
       messages: "",
       autoUpdate: true,
       isUpdating: false,
-      countDown: 30,
-      blabalba: null
+      countDown: 30
     };
   },
   async created() {
@@ -120,12 +106,16 @@ export default {
     this.rating = data.rating;
     this.ro_title = data.title;
     this.imageUrl = data.thumbnail;
-    this.imageName = data.thumbnail
-      .split("/upload/thumbnail/")
-      .splice(1)
-      .join();
     this.premiered = data.premiered;
     this.description = data.description;
+    this.thumbnail = [
+      {
+        name: data.thumbnail
+          .split("/upload/thumbnail/")
+          .splice(1)
+          .join()
+      }
+    ];
 
     this.en_title =
       data.animemeta
@@ -147,7 +137,7 @@ export default {
       .join();
   },
   mounted() {
-    this.autoupdate()
+    this.autoupdate();
   },
   methods: {
     async sumbit(cb) {
@@ -157,7 +147,7 @@ export default {
 
       formData.append("anime_id", anime_id);
       formData.append("terms", terms);
-      formData.append("thumbnail", this.imageFile);
+      formData.append("thumbnail", this.thumbnail);
       formData.append("title", this.ro_title);
       formData.append("en", this.en_title);
       formData.append("jp", this.jp_title);
@@ -176,28 +166,6 @@ export default {
         }, 1000);
       }
     },
-    pickFile() {
-      this.$refs.image.click();
-    },
-    onFilePicked(e) {
-      const files = e.target.files;
-      if (files[0] !== undefined) {
-        this.imageName = files[0].name;
-        if (this.imageName.lastIndexOf(".") <= 0) {
-          return;
-        }
-        const fr = new FileReader();
-        fr.readAsDataURL(files[0]);
-        fr.addEventListener("load", () => {
-          this.imageUrl = fr.result;
-          this.imageFile = files[0]; // this is an image file that can be sent to server...
-        });
-      } else {
-        this.imageName = "";
-        this.imageFile = "";
-        this.imageUrl = "";
-      }
-    },
     async deletePost() {
       var form = {
         anime_id: this.$route.params.id
@@ -207,7 +175,7 @@ export default {
       if (this.messages.success) {
         setTimeout(() => {
           this.$router.push({ path: "/admin/anime/edit" });
-        }, 2000);
+        }, 1000);
       }
     },
     autoupdate() {
@@ -232,7 +200,19 @@ export default {
       if (val) this.autoupdate();
     },
     ro_title(val) {
-      this.title = `Edit anime (${val})`
+      this.title = `Edit anime (${val})`;
+    },
+    thumbnail(file) {
+      if (file && file.length === undefined) {
+        const fr = new FileReader();
+        fr.readAsDataURL(file);
+        fr.addEventListener("load", () => {
+          this.imageUrl = fr.result;
+        });
+      }
+      if (!file) {
+        this.imageUrl = "";
+      }
     }
   }
 };

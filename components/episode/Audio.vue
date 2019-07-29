@@ -9,8 +9,8 @@
     hide-selected
   >
     <template v-slot:selection="data">
-      <v-chip :selected="data.selected" close class="chip--select-multi" @input="remove(data.item)">
-        <v-avatar>
+      <v-chip :input-value="data.selected" close class="chip--select-multi" @click:close="remove(data.item)">
+        <v-avatar left>
           <v-img :src="data.item.value"></v-img>
         </v-avatar>
         {{ data.item.key }}{{ selected(audio) }}
@@ -18,15 +18,15 @@
     </template>
     <template v-slot:item="data">
       <template v-if="typeof data.item !== 'object'">
-        <v-list-tile-content v-text="data.item"></v-list-tile-content>
+        <v-list-item-content v-text="data.item"></v-list-item-content>
       </template>
       <template v-else>
-        <v-list-tile-avatar tile>
+        <v-list-item-avatar tile>
           <img :src="data.item.value" />
-        </v-list-tile-avatar>
-        <v-list-tile-content>
-          <v-list-tile-title v-html="data.item.key"></v-list-tile-title>
-        </v-list-tile-content>
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title v-html="data.item.key"></v-list-item-title>
+        </v-list-item-content>
       </template>
     </template>
   </v-autocomplete>

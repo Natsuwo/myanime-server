@@ -1,7 +1,7 @@
 {
   "name": "myanime-server",
   "version": "1.0.0",
-  "description": "My scrumtrulescent Nuxt.js project",
+  "description": "My groovy Nuxt.js project",
   "author": "kirigayakazuto42@gmail.com",
   "private": true,
   "scripts": {
@@ -15,25 +15,22 @@
     "bcrypt": "^3.0.6",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.4",
-    "cookie-universal-nuxt": "^2.0.16",
+    "cookie-universal-nuxt": "^2.0.17",
     "cross-env": "^5.2.0",
     "dotenv": "^8.0.0",
-    "express": "^4.16.4",
+    "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "md5": "^2.2.1",
-    "mongoose": "^5.6.6",
+    "mongoose": "^5.6.7",
     "multer": "^1.4.2",
-    "nuxt": "^2.4.0",
+    "nuxt": "^2.8.1",
     "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0",
     "socketio-jwt": "^4.5.0",
-    "uniqid": "^5.0.3",
-    "vuetify": "^1.5.5",
-    "vuetify-loader": "^1.2.1"
+    "uniqid": "^5.0.3"
   },
   "devDependencies": {
-    "nodemon": "^1.18.9",
-    "stylus": "^0.54.5",
-    "stylus-loader": "^3.0.2"
+    "@nuxtjs/vuetify": "^1.0.2",
+    "nodemon": "^1.19.1"
   }
 }

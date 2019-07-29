@@ -2,22 +2,22 @@
   <v-layout row wrap justify-center align-center>
     <v-snackbar v-model="snackbar" :timeout="4000" top :color="messages.success ? 'green' : 'red'">
       <span>{{messages.success ? messages.message : messages.error}}</span>
-      <v-btn flat @click="snackbar = false" color="white">Close</v-btn>
+      <v-btn text @click="snackbar = false" color="white">Close</v-btn>
     </v-snackbar>
-    <v-flex xs12 md8 md6>
+    <v-flex xs12 md10 md8>
       <v-card>
         <v-toolbar dark color="primary">
           <v-toolbar-title>{{title}}</v-toolbar-title>
         </v-toolbar>
         <v-card-text>
-          <v-text-field v-model="name" label="Name" prepend-icon="title"></v-text-field>
+          <v-text-field v-model="name" label="Name" prepend-icon="mdi-format-title"></v-text-field>
           <Cover :data="cover" @fansubCoverEmit="(data) => cover = data" />
           <Banner :data="banner" @fansubBannerEmit="(data) => banner = data" />
           <v-textarea
             v-model="description"
             name="input-7-1"
             label="Descriptions"
-            prepend-icon="description"
+            prepend-icon="mdi-file-document-edit"
           ></v-textarea>
           <v-switch color="primary" v-model="trusted" label="Trusted?"></v-switch>
           <v-btn @click="submit" color="primary">Edit</v-btn>

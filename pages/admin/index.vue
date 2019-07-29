@@ -27,22 +27,22 @@ export default {
     return {
       items: [
         {
-          icon: "movie",
+          icon: "mdi-movie",
           title: "Animes",
           count: 1000
         },
         {
-          icon: "video_library",
+          icon: "mdi-library-video",
           title: "Episodes",
           count: 2000
         },
         {
-            icon: "person",
+            icon: "mdi-account",
             title: "Users",
             count: 200
         },
         {
-            icon: "comment",
+            icon: "mdi-comment",
             title: "Comments",
             count: 1000
         }
