@@ -1,3 +1,3 @@
 export default {
-    authStatus: state => state.isUserLoggedIn
+    authStatus: state => state.isUser
 }

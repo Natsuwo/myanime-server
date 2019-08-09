@@ -4,16 +4,21 @@
     :items="dataFansub"
     chips
     label="Fansub"
-    item-text="name"
-    item-value="name"
+    item-text="key"
+    item-value="key"
     hide-selected
   >
     <template v-slot:selection="data">
-      <v-chip :input-value="data.selected" close class="chip--select-multi" @click:close="remove(data.item)">
+      <v-chip
+        :input-value="data.selected"
+        close
+        class="chip--select-multi"
+        @click:close="remove(data.item)"
+      >
         <v-avatar left>
-          <v-img :src="data.item.cover"></v-img>
+          <v-img :src="data.item.value"></v-img>
         </v-avatar>
-        {{ data.item.name }}{{ selected(fansub) }}
+        {{ data.item.key }}{{ selected(fansub) }}
       </v-chip>
     </template>
     <template v-slot:item="data">
@@ -22,17 +27,17 @@
       </template>
       <template v-else>
         <v-list-item-avatar tile>
-          <img :src="data.item.cover" />
+          <img :src="data.item.value" />
         </v-list-item-avatar>
         <v-list-item-content>
-          <v-list-item-title v-html="data.item.name"></v-list-item-title>
+          <v-list-item-title v-html="data.item.key"></v-list-item-title>
         </v-list-item-content>
       </template>
     </template>
   </v-autocomplete>
 </template>
 <script>
-import FansubServices from "@/services/Fansub";
+import TermServices from "@/services/Term";
 export default {
   props: ["data"],
   data() {
@@ -42,7 +47,8 @@ export default {
     };
   },
   async created() {
-    this.dataFansub = (await FansubServices.get()).data;
+    var type = "fansub";
+    this.dataFansub = (await TermServices.get(type)).data;
   },
   methods: {
     remove(item) {

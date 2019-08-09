@@ -36,7 +36,7 @@ module.exports = {
             var { title, en, jp, type, rating, status, premiered, terms, description } = req.body
             var thumbnail = ''
             if (req.file) {
-                thumbnail = `/upload/thumbnail/${req.file.originalname}`
+                thumbnail = `/library/upload/cover/${req.file.originalname}`
             }
 
             var animeCreate = await Anime.create({ title, premiered, type, rating, status, description, thumbnail })
@@ -85,7 +85,7 @@ module.exports = {
             var { anime_id, title, en, jp, type, rating, status, premiered, terms, description } = req.body
 
             if (req.file) {
-                var thumbnail = `/upload/thumbnail/${req.file.originalname}`
+                var thumbnail = `/library/upload/cover/${req.file.originalname}`
                 await Anime.updateOne({ anime_id }, { thumbnail })
             }
 

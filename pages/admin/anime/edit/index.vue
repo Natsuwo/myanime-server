@@ -22,7 +22,7 @@
     <v-data-table
       hide-default-footer
       :items="animes"
-      sort-by="update_at"
+      sort-by="updated_at"
       sort-desc
       :headers="headers"
       class="elevation-1 my-table"
@@ -33,7 +33,7 @@
       <template v-slot:item.genre="{ item }">{{ getTerms(item, 'genre') }}</template>
       <template v-slot:item.season="{ item }">{{ getTerms(item, 'season') }}</template>
       <template v-slot:item.studio="{ item }">{{ getTerms(item, 'studio') }}</template>
-      <template v-slot:item.update_at="{ item }">{{ getTime(item.update_at) }}</template>
+      <template v-slot:item.updated_at="{ item }">{{ getTime(item.updated_at) }}</template>
       <template v-slot:item.control="{ item }">
         <v-icon @click="editAnime(item.anime_id)">mdi-pencil</v-icon>
         <v-icon @click="deleteAnime(item)">mdi-delete</v-icon>

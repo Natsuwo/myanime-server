@@ -21,7 +21,7 @@ const commentSchema = new mongoose.Schema({
 commentSchema.pre('save', async function (next) {
     var comment = this
     comment.create_at = Date.now()
-    var counter = await Counter.findOneAndUpdate({ key: "comment_id" }, { $inc: { value: 1 } }, { new: true })
+    var counter = await Counter.findOneAndUpdate({ key: "comment" }, { $inc: { value: 1 } }, { new: true })
     comment.comment_id = counter.value
     next()
 })

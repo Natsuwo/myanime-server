@@ -37,7 +37,7 @@
     },
     {
         "text": "Last Update",
-        "value": "update_at",
+        "value": "updated_at",
         "sortable": true,
         "align": "left"
     },

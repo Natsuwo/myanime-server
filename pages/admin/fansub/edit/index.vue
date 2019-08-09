@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>{{ title }} ({{ count }})</h1>
+    <h1 class="py-3">{{ title }} ({{ count }})</h1>
     <v-btn :to="'add-new'" color="primary">Add New</v-btn>
     <div class="text-center">
       <!-- <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination> -->
@@ -25,26 +25,14 @@
       class="elevation-1 my-table"
       hide-default-footer
     >
-      <template v-slot:item.name="{ item }">
-        <b>{{ item.name }}</b>
-        <v-tooltip v-if="item.trusted" top color="#1d850e">
-          <template v-slot:activator="{ on }">
-            <v-icon class="trusted-flag" v-on="on">mdi-check-circle</v-icon>
-          </template>
-          <span>Trusted</span>
-        </v-tooltip>
-      </template>
-      <template v-slot:item.cover="{ item }">
+      <template v-slot:item.value="{ item }">
         <v-avatar>
-          <v-img width="50" height="50" :src="item.cover"></v-img>
+          <v-img width="45" :src="item.value"></v-img>
         </v-avatar>
       </template>
-      <template v-slot:item.banner="{ item }">
-        <v-img class="my-1" width="175px" :src="item.banner"></v-img>
-      </template>
       <template v-slot:item.control="{ item }">
-        <v-icon @click="editFansub(item.fansub_id)">mdi-pencil</v-icon>
-        <v-icon @click="removeFansub(item)">mdi-delete</v-icon>
+        <v-icon @click="editTerm(item.term_id)">mdi-pencil</v-icon>
+        <v-icon @click="deleteTerm(item)">mdi-delete</v-icon>
       </template>
     </v-data-table>
     <div class="text-center pt-4">
@@ -54,7 +42,7 @@
 </template>
 
 <script>
-import FansubServices from "@/services/Fansub";
+import TermServices from "@/services/Term";
 export default {
   head() {
     return {
@@ -67,32 +55,25 @@ export default {
       terms: [],
       count: 0,
       headers: [
-        { text: "Name", value: "name", sortable: true, align: "left" },
-        { text: "cover", value: "cover", sortable: false, align: "left" },
-        { text: "banner", value: "banner", sortable: false, align: "left" },
+        { text: "Name", value: "key", sortable: true, align: "left" },
+        { text: "Avatar", value: "value", sortable: true, align: "left" },
         {
-          text: "followers",
-          value: "followers",
+          text: "Description",
+          value: "description",
           sortable: true,
-          align: "right"
-        },
-        {
-          text: "Animes Translated",
-          value: "count",
-          sortable: true,
-          align: "right"
+          align: "left"
         },
         { text: "Controls", value: "control", sortable: false, align: "right" }
       ]
     };
   },
   async created() {
-    var fansub = await FansubServices.get();
-    this.terms = fansub.data;
-    this.count = fansub.count;
+    var type = "fansub";
+    var data = await TermServices.get(type);
+    this.terms = data.data;
+    this.count = data.count;
   },
   methods: {
-    async onPageChange() {},
     async searchTimeOut(cb) {},
     getTime(time) {
       var date = new Date(time);
@@ -105,16 +86,17 @@ export default {
       }
       return expired;
     },
-    async removeFansub(item) {
+    async deleteTerm(item) {
       const index = this.terms.indexOf(item);
       if (index >= 0) this.terms.splice(index, 1);
       var form = {
-        fansub_id: item.fansub_id
+        type: "fansub",
+        term_id: item.term_id
       };
-      await FansubServices.removeFansub(form);
+      await TermServices.deleteTerm(form);
       this.count--;
     },
-    async editFansub(id) {
+    editTerm(id) {
       this.$router.push({ path: `edit/${id}` });
     }
   }

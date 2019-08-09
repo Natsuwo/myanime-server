@@ -89,7 +89,6 @@ export default {
       description: "",
       title: `Edit ${this.ro_title}`,
       imageUrl: "",
-      imageName: "",
       editImage: false,
       snackbar: false,
       messages: "",
@@ -111,7 +110,7 @@ export default {
     this.thumbnail = [
       {
         name: data.thumbnail
-          .split("/upload/thumbnail/")
+          .split("/upload/cover/")
           .splice(1)
           .join()
       }

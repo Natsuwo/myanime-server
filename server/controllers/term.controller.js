@@ -31,7 +31,7 @@ module.exports = {
         try {
             var { key, value, type, description } = req.body
             if (req.file) {
-                value = `/upload/image/${req.file.originalname}`
+                value = `/library/upload/image/${req.file.originalname}`
             }
             var termCreate = await Term.create({ type, key, value, description })
             var term_id = termCreate.term_id
@@ -44,7 +44,7 @@ module.exports = {
         try {
             var { type, key, value, description, term_id } = req.body
             if (req.file) {
-                value = `/upload/image/${req.file.originalname}`
+                value = `/library/upload/image/${req.file.originalname}`
             }
             await Term.updateOne({ term_id, type }, { key, value, description })
             return res.send({ success: true, message: 'Edited.' })

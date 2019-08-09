@@ -12,19 +12,7 @@
         </v-toolbar>
         <v-card-text>
           <v-text-field v-model="key" label="Name" prepend-icon="mdi-format-title"></v-text-field>
-          <v-text-field
-            label="Select Image"
-            @click="pickFile"
-            v-model="imageName"
-            prepend-icon="mdi-attachment"
-          ></v-text-field>
-          <input
-            type="file"
-            style="display: none"
-            ref="image"
-            accept="image/*"
-            @change="onFilePicked"
-          />
+          <v-file-input v-model="value" type="file" accept="image/*" label="Avatar"></v-file-input>
           <v-textarea
             v-model="description"
             name="input-7-1"
@@ -49,12 +37,11 @@ export default {
   data() {
     return {
       key: "",
+      value: [],
       description: "",
       messages: "",
       snackbar: false,
-      imageName: "",
       imageUrl: "",
-      imageFile: "",
       title: "Edit language"
     };
   },
@@ -68,13 +55,15 @@ export default {
       var data = (await TermServices.getSingle(form)).data;
       this.key = data.key;
       this.description = data.description;
-      if (data.value) {
-        this.imageUrl = data.value;
-        this.imageName = data.value
-          .split("/upload/image/")
-          .splice(1)
-          .join();
-      }
+      this.imageUrl = data.value;
+      this.value = [
+        {
+          name: data.value
+            .split("/upload/image/")
+            .splice(1)
+            .join()
+        }
+      ];
     } catch (err) {
       this.$router.push({ path: "/admin/language/edit" });
     }
@@ -85,33 +74,11 @@ export default {
       formData.append("term_id", this.$route.params.id);
       formData.append("type", "language");
       formData.append("key", this.key);
-      formData.append("value", this.imageFile || this.imageUrl);
+      formData.append("value", this.value || this.imageUrl);
       formData.append("description", this.description);
 
       this.messages = await TermServices.update(formData);
       this.snackbar = true;
-    },
-    pickFile() {
-      this.$refs.image.click();
-    },
-    onFilePicked(e) {
-      const files = e.target.files;
-      if (files[0] !== undefined) {
-        this.imageName = files[0].name;
-        if (this.imageName.lastIndexOf(".") <= 0) {
-          return;
-        }
-        const fr = new FileReader();
-        fr.readAsDataURL(files[0]);
-        fr.addEventListener("load", () => {
-          this.imageUrl = fr.result;
-          this.imageFile = files[0]; // this is an image file that can be sent to server...
-        });
-      } else {
-        this.imageName = "";
-        this.imageFile = "";
-        this.imageUrl = "";
-      }
     },
     async deleteTerm() {
       var form = {
@@ -130,6 +97,18 @@ export default {
   watch: {
     key(val) {
       this.title = `Edit language (${val})`;
+    },
+    value(file) {
+      if (file && file.length === undefined) {
+        const fr = new FileReader();
+        fr.readAsDataURL(file);
+        fr.addEventListener("load", () => {
+          this.imageUrl = fr.result;
+        });
+      }
+      if (!file) {
+        this.imageUrl = "";
+      }
     }
   }
 };

@@ -9,32 +9,27 @@
         <v-toolbar dark color="primary">
           <v-toolbar-title>{{title}}</v-toolbar-title>
         </v-toolbar>
-        <v-card-text>
-          <v-text-field v-model="name" label="Name" prepend-icon="mdi-format-title"></v-text-field>
-          <Cover @fansubCoverEmit="(data) => cover = data" />
-          <Banner @fansubBannerEmit="(data) => banner = data" />
-          <v-textarea
-            v-model="description"
-            name="input-7-1"
-            label="Descriptions"
-            prepend-icon="mdi-file-document-edit"
-          ></v-textarea>
-           <v-switch color="primary" v-model="trusted" label="Trusted?"></v-switch>
-          <v-btn @click="submit" color="primary">Submit</v-btn>
-        </v-card-text>
+        <v-form enctype="multipart/form-data">
+          <v-card-text>
+            <v-text-field v-model="key" label="Name" prepend-icon="mdi-format-title"></v-text-field>
+            <img :src="imageUrl" height="150" v-if="imageUrl" />
+            <v-file-input v-model="value" type="file" accept="image/*" label="Avatar"></v-file-input>
+            <v-textarea
+              v-model="description"
+              prepend-icon="mdi-file-document-edit"
+              name="input-7-1"
+              label="Descriptions"
+            ></v-textarea>
+            <v-btn @click="submit" color="primary">Submit</v-btn>
+          </v-card-text>
+        </v-form>
       </v-card>
     </v-flex>
   </v-layout>
 </template>
 <script>
-import Cover from "@/components/fansub/Cover";
-import Banner from "@/components/fansub/Banner";
-import FansubServices from "@/services/Fansub";
+import TermServices from "@/services/Term";
 export default {
-  components: {
-    Cover,
-    Banner
-  },
   head() {
     return {
       title: this.title
@@ -42,35 +37,44 @@ export default {
   },
   data() {
     return {
-      name: "",
-      cover: "",
-      banner: "",
+      key: "",
+      value: [],
       description: "",
-      trusted: false,
       messages: "",
       snackbar: false,
+      imageUrl: "",
       title: "Add new (Fansub)"
     };
   },
   methods: {
     async submit() {
       var formData = new FormData();
-
-      formData.append("name", this.name);
-      formData.append("cover", this.cover);
-      formData.append("banner", this.banner);
-      formData.append("trusted", this.trusted);
+      formData.append("type", "fansub");
+      formData.append("key", this.key);
+      formData.append("value", this.value);
       formData.append("description", this.description);
 
-      this.messages = await FansubServices.post(formData);
+      this.messages = await TermServices.post(formData);
       this.snackbar = true;
       if (this.messages.success) {
         setTimeout(() => {
           this.$router.push({
-            path: `/admin/fansub/edit/${this.messages.fansub_id}`
+            path: `/admin/fansub/edit/${this.messages.term_id}`
           });
         }, 1000);
       }
+    }
+  },
+  watch: {
+    value(file) {
+      if (file) {
+        const fr = new FileReader();
+        fr.readAsDataURL(file);
+        fr.addEventListener("load", () => {
+          this.imageUrl = fr.result;
+        });
+      }
+      this.imageUrl = "";
     }
   }
 };

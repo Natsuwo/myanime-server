@@ -6,7 +6,7 @@ const { get, post, update, removeTerm, removeAnime } = require('../controllers/a
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './static/upload/thumbnail/')
+        cb(null, '../library/upload/cover/')
     },
     filename: function (req, file, cb) {
         cb(null, file.originalname)

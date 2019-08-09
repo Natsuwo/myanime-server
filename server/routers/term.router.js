@@ -6,7 +6,7 @@ const { checkMiddleware } = require('../middlewares/term.middleware')
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './static/upload/image/')
+        cb(null, '../library/upload/image/')
     },
     filename: function (req, file, cb) {
         cb(null, file.originalname)

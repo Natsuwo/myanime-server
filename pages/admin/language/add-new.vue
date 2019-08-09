@@ -13,19 +13,7 @@
           <v-card-text>
             <v-text-field v-model="key" label="Name" prepend-icon="mdi-format-title"></v-text-field>
             <img :src="imageUrl" height="150" v-if="imageUrl" />
-            <v-text-field
-              label="Select Image"
-              @click="pickFile"
-              v-model="imageName"
-              prepend-icon="mdi-attachment"
-            ></v-text-field>
-            <input
-              type="file"
-              style="display: none"
-              ref="image"
-              accept="image/*"
-              @change="onFilePicked"
-            />
+            <v-file-input v-model="value" type="file" accept="image/*" label="Avatar"></v-file-input>
             <v-textarea
               v-model="description"
               prepend-icon="mdi-file-document-edit"
@@ -50,22 +38,20 @@ export default {
   data() {
     return {
       key: "",
+      value: [],
       description: "",
       messages: "",
       snackbar: false,
-      imageName: "",
       imageUrl: "",
-      imageFile: "",
-      title: "Add new (Languages)"
+      title: "Add new (Language)"
     };
   },
   methods: {
     async submit() {
       var formData = new FormData();
-      formData.append("term_id", this.$route.params.id);
       formData.append("type", "language");
       formData.append("key", this.key);
-      formData.append("value", this.imageFile);
+      formData.append("value", this.value);
       formData.append("description", this.description);
 
       this.messages = await TermServices.post(formData);
@@ -77,28 +63,18 @@ export default {
           });
         }, 1000);
       }
-    },
-    pickFile() {
-      this.$refs.image.click();
-    },
-    onFilePicked(e) {
-      const files = e.target.files;
-      if (files[0] !== undefined) {
-        this.imageName = files[0].name;
-        if (this.imageName.lastIndexOf(".") <= 0) {
-          return;
-        }
+    }
+  },
+  watch: {
+    value(file) {
+      if (file) {
         const fr = new FileReader();
-        fr.readAsDataURL(files[0]);
+        fr.readAsDataURL(file);
         fr.addEventListener("load", () => {
           this.imageUrl = fr.result;
-          this.imageFile = files[0]; // this is an image file that can be sent to server...
         });
-      } else {
-        this.imageName = "";
-        this.imageFile = "";
-        this.imageUrl = "";
       }
+      this.imageUrl = "";
     }
   }
 };

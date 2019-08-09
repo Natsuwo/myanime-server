@@ -30,6 +30,7 @@ module.exports = (rootDir) => {
     //     console.log('connected');
     // });
     app.use(cookieParser(process.env.COOKIE_SECRET))
+    app.use('/library', express.static('../library'))
     app.use(bodyParser.json())
     app.use(bodyParser.urlencoded({ extended: true }))
     app.use('/api', router)

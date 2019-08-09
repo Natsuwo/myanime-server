@@ -8,34 +8,29 @@
       <v-card>
         <v-toolbar dark color="primary">
           <v-toolbar-title>{{title}}</v-toolbar-title>
+          <v-avatar class="term-flag">
+            <v-img :src="imageUrl" width="42px" v-if="imageUrl"></v-img>
+          </v-avatar>
         </v-toolbar>
         <v-card-text>
-          <v-text-field v-model="name" label="Name" prepend-icon="mdi-format-title"></v-text-field>
-          <Cover :data="cover" @fansubCoverEmit="(data) => cover = data" />
-          <Banner :data="banner" @fansubBannerEmit="(data) => banner = data" />
+          <v-text-field v-model="key" label="Name" prepend-icon="mdi-format-title"></v-text-field>
+          <v-file-input v-model="value" type="file" accept="image/*" label="Avatar"></v-file-input>
           <v-textarea
             v-model="description"
             name="input-7-1"
             label="Descriptions"
             prepend-icon="mdi-file-document-edit"
           ></v-textarea>
-          <v-switch color="primary" v-model="trusted" label="Trusted?"></v-switch>
-          <v-btn @click="submit" color="primary">Edit</v-btn>
-          <v-btn @click="removeFansub" color="red">Remove</v-btn>
+          <v-btn @click="submit" color="primary">Update</v-btn>
+          <v-btn @click="deleteTerm" color="error">Delete</v-btn>
         </v-card-text>
       </v-card>
     </v-flex>
   </v-layout>
 </template>
 <script>
-import Cover from "@/components/fansub/Cover";
-import Banner from "@/components/fansub/Banner";
-import FansubServices from "@/services/Fansub";
+import TermServices from "@/services/Term";
 export default {
-  components: {
-    Cover,
-    Banner
-  },
   head() {
     return {
       title: this.title
@@ -43,45 +38,56 @@ export default {
   },
   data() {
     return {
-      name: "",
-      cover: "",
-      banner: "",
+      key: "",
+      value: [],
       description: "",
-      trusted: false,
       messages: "",
       snackbar: false,
+      imageUrl: "",
       title: "Edit fansub"
     };
   },
   async created() {
-    var fansub_id = this.$route.params.id;
-    var data = (await FansubServices.getUpdate(fansub_id)).data;
-    this.name = data.name;
-    this.cover = data.cover;
-    this.banner = data.banner;
-    this.description = data.description;
-    this.trusted = data.trusted;
+    try {
+      var term_id = this.$route.params.id;
+      var form = {
+        type: "fansub",
+        term_id
+      };
+      var data = (await TermServices.getSingle(form)).data;
+      this.key = data.key;
+      this.description = data.description;
+      this.imageUrl = data.value;
+      this.value = [
+        {
+          name: data.value
+            .split("/upload/image/")
+            .splice(1)
+            .join()
+        }
+      ];
+    } catch (err) {
+      this.$router.push({ path: "/admin/fansub/edit" });
+    }
   },
   methods: {
     async submit() {
       var formData = new FormData();
-      var fansub_id = this.$route.params.id;
-
-      formData.append("fansub_id", fansub_id);
-      formData.append("name", this.name);
-      formData.append("cover", this.cover);
-      formData.append("banner", this.banner);
-      formData.append("trusted", this.trusted);
+      formData.append("term_id", this.$route.params.id);
+      formData.append("type", "fansub");
+      formData.append("key", this.key);
+      formData.append("value", this.value || this.imageUrl);
       formData.append("description", this.description);
 
-      this.messages = await FansubServices.update(formData);
+      this.messages = await TermServices.update(formData);
       this.snackbar = true;
     },
-    async removeFansub() {
+    async deleteTerm() {
       var form = {
-        fansub_id: this.$route.params.id
+        type: "fansub",
+        term_id: this.$route.params.id
       };
-      this.messages = await FansubServices.removeFansub(form);
+      this.messages = await TermServices.deleteTerm(form);
       this.snackbar = true;
       if (this.messages.success) {
         setTimeout(() => {
@@ -89,6 +95,29 @@ export default {
         }, 1000);
       }
     }
+  },
+  watch: {
+    key(val) {
+      this.title = `Edit fansub (${val})`;
+    },
+    value(file) {
+      if (file && file.length === undefined) {
+        const fr = new FileReader();
+        fr.readAsDataURL(file);
+        fr.addEventListener("load", () => {
+          this.imageUrl = fr.result;
+        });
+      }
+      if (!file) {
+        this.imageUrl = "";
+      }
+    }
   }
 };
 </script>
+<style scoped>
+.term-flag {
+  position: absolute;
+  right: 10px;
+}
+</style>
