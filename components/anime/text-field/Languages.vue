@@ -14,7 +14,7 @@
         close
         class="chip--select-multi"
         @click:close="remove(data.item)"
-      >{{ data.item.key }}{{ selected(languages) }}</v-chip>
+      >{{ data.item.key }}</v-chip>
     </template>
     <template v-slot:item="data">
       <template v-if="typeof data.item !== 'object'">
@@ -29,24 +29,25 @@
   </v-autocomplete>
 </template>
 <script>
-import TermServices from "@/services/Term";
 export default {
   data() {
     return {
-      languages: [],
-      dataLanguages: []
+      languages: []
     };
   },
-  async created() {
-    var type = "language";
-    this.dataLanguages = (await TermServices.get(type)).data;
+  computed: {
+    dataLanguages() {
+      return this.$store.state.term.terms.filter(x => x.type === "language");
+    }
   },
   methods: {
     remove(item) {
       const index = this.languages.indexOf(item.name);
       if (index >= 0) this.languages.splice(index, 1);
-    },
-    selected(data) {
+    }
+  },
+  watch: {
+    languages() {
       this.$emit("languageEmit", data);
     }
   }

@@ -1,21 +1,28 @@
 import Api from './Api'
-export default {
-    async get() {
-        return (await Api().get('/admin/anime/get')).data
-    },
-    async post(form) {
-        return (await Api().post('/admin/anime/post', form)).data
-    },
-    async getUpdate(id) {
-        return (await Api().get(`/admin/anime/update?anime_id=${id}`)).data
-    },
-    async postUpdate(form) {
-        return (await Api().post('/admin/anime/update', form)).data
-    },
-    async removeTerm(form) {
-        return (await Api().post('/admin/anime/remove-term', form)).data
-    },
-    async removeAnime(form) {
-        return (await Api().post('/admin/anime/remove-anime', form)).data
-    }
+
+export function get(headers, limit, page, search) {
+    var limitQuery = limit ? `?limit=${limit}` : '?limit=10'
+    var pageQuery = page ? `&page=${page}` : ''
+    var searchQuery = search ? `&q=${search}` : ''
+    return Api(headers).get(`/server/anime/get${limitQuery}${pageQuery}${searchQuery}`)
+}
+
+export function addNew(headers, form) {
+    return Api(headers).post('/server/anime/post', form)
+}
+
+export function getUpdate(headers, id) {
+    return Api(headers).get(`/server/anime/update?anime_id=${id}`)
+}
+
+export function postUpdate(headers, form) {
+    return Api(headers).put('/server/anime/update', form)
+}
+
+export function removeTerm(headers, form) {
+    return Api(headers).post('/server/anime/remove-term', form)
+}
+
+export function removeAnime(headers, form) {
+    return Api(headers).post('/server/anime/remove-anime', form)
 }

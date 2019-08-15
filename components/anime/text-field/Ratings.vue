@@ -13,7 +13,7 @@
         close
         class="chip--select-multi"
         @click:close="remove(data.item)"
-      >{{ data.item.name }}{{ selected(ratings) }}</v-chip>
+      >{{ data.item.name }}</v-chip>
     </template>
     <template v-slot:item="data">
       <template v-if="typeof data.item !== 'object'">
@@ -37,18 +37,17 @@ export default {
       dataRatings: Ratings
     };
   },
-  async created() {},
+  async created() {
+    if (this.data) this.ratings = this.data;
+  },
   methods: {
     remove(item) {
-      this.ratings = [];
-    },
-    selected(data) {
-      this.$emit("ratingEmit", data);
+      this.ratings = "";
     }
   },
   watch: {
-    data() {
-      this.ratings = this.data;
+    ratings(val) {
+      this.$emit("ratingEmit", val);
     }
   }
 };

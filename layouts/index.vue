@@ -1,11 +1,6 @@
 <template>
   <v-app dark style="background: #2d3a4b;">
-    <v-layout v-if="$store.state.loading === true" row wrap justify-center align-center>
-      <v-flex xs12 class="text-center">
-        <v-progress-circular indeterminate color="purple"></v-progress-circular>
-      </v-flex>
-    </v-layout>
-    <v-layout v-if="$store.state.loading === false" row wrap justify-center align-center>
+    <v-layout row wrap justify-center align-center>
       <v-content class="text-center">
         <v-container>
           <nuxt />
@@ -18,16 +13,16 @@
 <script>
 import Authentication from "@/services/Authentication";
 export default {
-  async mounted() {
-    try {
-      var checkUser = await Authentication.checkUserToken();
-      if (checkUser.success === false) {
-        return this.$store.commit("loading", false);
-      }
-      this.$store.dispatch("loginActions", true);
-    } catch (err) {
-      console.log(err.message);
-    }
-  }
+  // async mounted() {
+  //   try {
+  //     var checkUser = await Authentication.checkUserToken();
+  //     if (checkUser.success === false) {
+  //       return this.$store.commit("loading", false);
+  //     }
+  //     this.$store.dispatch("loginActions", true);
+  //   } catch (err) {
+  //     console.log(err.message);
+  //   }
+  // }
 };
 </script>

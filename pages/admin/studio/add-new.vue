@@ -19,7 +19,6 @@
   </v-layout>
 </template>
 <script>
-import TermServices from "@/services/Term";
 export default {
   head() {
     return {
@@ -37,17 +36,22 @@ export default {
   },
   methods: {
     async submit() {
-      var form = {
+      var headers = {
+        "X-User-Session": this.$store.state.auth.userToken
+      };
+      var formData = {
         type: "studio",
         key: this.key,
         description: this.description
       };
-      this.messages = await TermServices.post(form);
-      this.snackbar = true;
-      if (this.messages.success) {
+      var response = await this.$store.dispatch("term/addNew", {
+        headers,
+        formData
+      });
+      if (response.success) {
         setTimeout(() => {
           this.$router.push({
-            path: `/admin/studio/edit/${this.messages.term_id}`
+            path: `/admin/studio/edit/${response.data.term_id}`
           });
         }, 1000);
       }

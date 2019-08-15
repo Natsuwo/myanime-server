@@ -1,9 +1,5 @@
 <template>
   <v-layout row wrap justify-center align-center>
-    <v-snackbar v-model="snackbar" :timeout="4000" top :color="messages.success ? 'green' : 'red'">
-      <span>{{messages.success ? messages.message : messages.error}}</span>
-      <v-btn text @click="snackbar = false" color="white">Close</v-btn>
-    </v-snackbar>
     <v-flex xs12 md10 md8>
       <v-card>
         <v-toolbar dark color="primary">
@@ -28,7 +24,7 @@
   </v-layout>
 </template>
 <script>
-import TermServices from "@/services/Term";
+import { addNew } from "@/services/Term";
 export default {
   head() {
     return {
@@ -40,26 +36,29 @@ export default {
       key: "",
       value: [],
       description: "",
-      messages: "",
-      snackbar: false,
       imageUrl: "",
       title: "Add new (Fansub)"
     };
   },
   methods: {
     async submit() {
+      var headers = {
+        "X-User-Session": this.$store.state.auth.userToken
+      };
       var formData = new FormData();
       formData.append("type", "fansub");
       formData.append("key", this.key);
       formData.append("value", this.value);
       formData.append("description", this.description);
 
-      this.messages = await TermServices.post(formData);
-      this.snackbar = true;
-      if (this.messages.success) {
+      var response = await this.$store.dispatch("term/addNew", {
+        headers,
+        formData
+      });
+      if (response.success) {
         setTimeout(() => {
           this.$router.push({
-            path: `/admin/fansub/edit/${this.messages.term_id}`
+            path: `/admin/fansub/edit/${response.data.term_id}`
           });
         }, 1000);
       }

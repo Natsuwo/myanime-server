@@ -18,17 +18,21 @@
         <v-spacer></v-spacer>
       </div>
     </div>
-    <v-data-table :items="comments" :headers="headers" class="elevation-1 my-table" hide-default-footer>
-      <template v-slot:items="props">
-        <td>{{ props.item.user_id }}</td>
-        <td>{{ props.item.comment }}</td>
-        <td>{{ props.item.episode_id }}</td>
-        <td>{{ getTime(props.item.create_at) }}</td>
-        <td>
-          <nuxt-link class="text-control" :to="`/admin/users/${props.item.user_id}/edit`">Edit</nuxt-link>
-        </td>
+    <no-ssr>
+      <v-data-table
+        :items="comments"
+        :headers="headers"
+        class="elevation-1 my-table"
+        hide-default-footer
+      >
+      <template v-slot:item.user_id="{ item }">{{ getUser(item.user_id) }}</template>
+      <template v-slot:item.created_at="{ item }">{{ getTime(item.created_at) }}</template>
+       <template v-slot:item.control="{ item }">
+        <!-- <v-icon @click="editAnime(item.anime_id)">mdi-pencil</v-icon> -->
+        <v-icon @click="deleteComments(item)">mdi-delete</v-icon>
       </template>
-    </v-data-table>
+      </v-data-table>
+    </no-ssr>
     <div class="text-center pt-4">
       <!-- <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination> -->
     </div>
@@ -36,28 +40,45 @@
 </template>
 
 <script>
-import CommentService from "@/services/Comment";
+import { getComments } from "@/services/Comment";
 export default {
+  async fetch({ store }) {
+    var headers = {
+      "X-User-Session": store.state.auth.userToken
+    };
+    var response = (await getComments(headers)).data;
+    store.dispatch("comment/commentsData", response.data);
+  },
+  computed: {
+    comments() {
+      return this.$store.state.comment.comments;
+    },
+    users() {
+      return this.$store.state.comment.users;
+    }
+  },
   data() {
     return {
       title: "Comments",
-      comments: [],
       headers: [
-        { text: "Author", value: 'user_id', sortable: true, align: "left" },
-        { text: "Comment", value: 'comment',sortable: true, align: "left" },
-        { text: "In Episode", value: 'episode_id', sortable: true, align: "left" },
-        { text: "On", sortable: true, value:'create_at', align: "left" },
-        { text: "Control", sortable: false, align: "left" }
+        { text: "Author", value: "user_id", sortable: true, align: "left" },
+        { text: "Comment", value: "comment", sortable: true, align: "left" },
+        {
+          text: "In Episode",
+          value: "episode_id",
+          sortable: true,
+          align: "left"
+        },
+        { text: "On", sortable: true, value: "created_at", align: "left" },
+        { text: "Control", value: "control", sortable: false, align: "left" }
       ]
     };
   },
-  async created() {
-    var comments = await CommentService.get();
-    if (comments.success !== false) {
-      return (this.comments = comments.data);
-    }
-  },
   methods: {
+    getUser(id) {
+      var user = this.users.find(x => x.user_id === id);
+      return user.username;
+    },
     async onPageChange() {},
     async searchTimeOut(cb) {},
     getTime(time) {
@@ -70,6 +91,15 @@ export default {
         expired = "Never";
       }
       return expired;
+    },
+    deleteComments() {
+      // const index = this.animes.indexOf(item);
+      // if (index >= 0) this.animes.splice(index, 1);
+      // var form = {
+      //   anime_id: item.anime_id
+      // };
+      // await AnimeServices.removeAnime(form);
+      // this.count--;
     }
   },
   head() {

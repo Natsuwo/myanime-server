@@ -5,7 +5,7 @@
     chips
     label="Season"
     item-text="key"
-    item-value="term_id"
+    item-value="key"
   >
     <template v-slot:selection="data">
       <v-chip
@@ -13,7 +13,7 @@
         close
         class="chip--select-multi"
         @click:close="remove(data.item)"
-      >{{ data.item.key }}{{ selected(season) }}</v-chip>
+      >{{ data.item.key }}</v-chip>
     </template>
     <template v-slot:item="data">
       <template v-if="typeof data.item !== 'object'">
@@ -28,30 +28,29 @@
   </v-autocomplete>
 </template>
 <script>
-import TermServices from "@/services/Term";
 export default {
   props: ["data"],
   data() {
     return {
-      season: [],
-      dataSeasons: []
+      season: []
     };
   },
+  computed: {
+    dataSeasons() {
+      return this.$store.state.term.terms.filter(x => x.type === "season");
+    }
+  },
   async created() {
-    var type = "season"
-    this.dataSeasons = (await TermServices.get(type)).data;
+    if (this.data) this.season = this.data;
   },
   methods: {
     async remove(item) {
-      this.season = [];
-    },
-    selected(data) {
-      this.$emit("seasonEmit", data);
+      this.season = "";
     }
   },
   watch: {
-    data() {
-      this.season = parseInt(this.data)
+    season(val) {
+      this.$emit("seasonEmit", val);
     }
   }
 };

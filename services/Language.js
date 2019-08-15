@@ -1,12 +1,12 @@
 import Api from './Api'
 export default {
     async get() {
-        return (await Api().get('/admin/language/get')).data
+        return (await Api().get('/server/language/get')).data
     },
     async post(form) {
-        return (await Api().post('/admin/language/post', form)).data
+        return (await Api().post('/server/language/post', form)).data
     },
     async update(form) {
-        return (await Api().post('/admin/language/update', form)).data
+        return (await Api().post('/server/language/update', form)).data
     }
 }

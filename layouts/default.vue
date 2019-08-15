@@ -1,19 +1,14 @@
 <template>
   <v-app dark>
-    <v-layout v-if="$store.state.loading === true" row wrap justify-center align-center>
-      <v-flex xs12 class="text-center">
-        <v-progress-circular indeterminate color="purple"></v-progress-circular>
-      </v-flex>
-    </v-layout>
-    <template v-if="$store.state.loading === false">
-      <NavDrawer :miniBind="mini" :drawerBind="drawer"/>
-      <NavBar @miniEmit="(data) => mini = data" @drawerEmit="(data) => drawer = data"/>
-      <v-content>
-        <v-container grid-list-xs>
-          <nuxt />
-        </v-container>
-      </v-content>
-    </template>
+    <no-ssr>
+      <NavDrawer :miniBind="mini" :drawerBind="drawer" />
+      <NavBar @miniEmit="(data) => mini = data" @drawerEmit="(data) => drawer = data" />
+    </no-ssr>
+    <v-content>
+      <v-container grid-list-xs>
+        <nuxt />
+      </v-container>
+    </v-content>
   </v-app>
 </template>
 
@@ -26,23 +21,11 @@ export default {
     return {
       mini: false,
       drawer: true
-    }
+    };
   },
   components: {
     NavBar,
     NavDrawer
-  },
-  async mounted() {
-    try {
-      var checkUser = await Authentication.checkUserToken();
-      if (checkUser.success === false) {
-        this.$store.commit("logout", true);
-        return this.$router.push({ path: "/" });
-      }
-      this.$store.dispatch("loginActions", true);
-    } catch (err) {
-      console.log(err.message);
-    }
   }
 };
 </script>

@@ -9,7 +9,12 @@
     hide-selected
   >
     <template v-slot:selection="data">
-      <v-chip :input-value="data.selected" close class="chip--select-multi" @click:close="remove(data.item)">
+      <v-chip
+        :input-value="data.selected"
+        close
+        class="chip--select-multi"
+        @click:close="remove(data.item)"
+      >
         <v-avatar left>
           <v-img :src="data.item.value"></v-img>
         </v-avatar>
@@ -32,18 +37,17 @@
   </v-autocomplete>
 </template>
 <script>
-import TermServices from "@/services/Term";
 export default {
   props: ["data"],
   data() {
     return {
-      audio: [],
-      dataAudio: []
+      audio: []
     };
   },
-  async created() {
-    var type = "language";
-    this.dataAudio = (await TermServices.get(type)).data;
+  computed: {
+    dataAudio() {
+      return this.$store.state.term.terms.filter(x => x.type === "language");
+    }
   },
   methods: {
     remove(item) {

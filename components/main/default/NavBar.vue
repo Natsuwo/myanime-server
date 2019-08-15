@@ -45,7 +45,7 @@
 </template>
 <script>
 import Items from "@/items/navbar.json";
-import Authentication from "@/services/Authentication";
+import { signOut } from "@/services/Authentication";
 export default {
   data() {
     return {
@@ -66,8 +66,8 @@ export default {
   },
   methods: {
     async logout() {
-      var logout = await Authentication.logout();
-      this.$store.commit("logout", true);
+      this.$cookies.remove("USER_ACCESS_TOKEN");
+      this.$store.commit("setAuth", false);
       this.$router.push({ path: "/" });
     },
     miniVariant() {

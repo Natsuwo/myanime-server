@@ -1,6 +1,6 @@
 <template>
   <v-layout row wrap>
-    <v-flex xs6 md3 v-for="item in items" pr-2 pb-2 :key="item.title">
+    <v-flex xs6 md3 v-for="(item, index) in items.items" pr-2 pb-2 :key="index">
       <v-card>
         <v-layout row wrap pa-3>
           <v-icon v-if="$vuetify.breakpoint.xsOnly" class="dashboard-icon" size="30">{{item.icon}}</v-icon>
@@ -17,37 +17,50 @@
   </v-layout>
 </template>
 <script>
+import { dashboard } from "@/services/Dashboard";
 export default {
   head() {
     return {
       title: "Admin"
     };
   },
-  data() {
-    return {
-      items: [
-        {
-          icon: "mdi-movie",
-          title: "Animes",
-          count: 1000
-        },
-        {
-          icon: "mdi-library-video",
-          title: "Episodes",
-          count: 2000
-        },
-        {
+  async fetch({ store }) {
+    var headers = {
+      "X-User-Session": store.state.auth.userToken
+    };
+    var response = (await dashboard(headers)).data;
+    store.dispatch("dashboard/dashboardData", response.data);
+  },
+  computed: {
+    dashboard() {
+      return this.$store.state.dashboard.dashboard;
+    },
+    items() {
+      return {
+        items: [
+          {
+            icon: "mdi-movie",
+            title: "Animes",
+            count: this.dashboard.animes
+          },
+          {
+            icon: "mdi-library-video",
+            title: "Episodes",
+            count: this.dashboard.episodes
+          },
+          {
             icon: "mdi-account",
             title: "Users",
-            count: 200
-        },
-        {
+            count: this.dashboard.users
+          },
+          {
             icon: "mdi-comment",
             title: "Comments",
-            count: 1000
-        }
-      ]
-    };
+            count: this.dashboard.comments
+          }
+        ]
+      };
+    }
   }
 };
 </script>
@@ -59,6 +72,6 @@ export default {
   color: #2196f3;
 }
 .dashboard-icon {
-    user-select: none;
+  user-select: none;
 }
 </style>

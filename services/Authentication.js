@@ -1,12 +1,17 @@
 import Api from './Api'
-export default {
-    async Login(form) {
-        return (await Api().post('/admin/auth/login', form)).data
-    },
-    async checkUserToken() {
-        return (await Api().post('/admin/auth/check-user-token')).data
-    },
-    async logout() {
-        return (await Api().post('/admin/auth/logout')).data
-    }
+
+// export function signUp(form) {
+//     return Api().post('/auth/sign-up', form);
+// }
+
+export function signIn(form) {
+    return Api().post('/server/auth/login', form)
+}
+
+export function signOut() {
+    return Api().post('/server/auth/logout')
+}
+
+export function checkUserToken(headers) {
+    return Api().post('/server/auth/check-user-token', {}, headers)
 }

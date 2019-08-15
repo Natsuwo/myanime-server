@@ -13,7 +13,7 @@
         close
         class="chip--select-multi"
         @click:close="remove"
-      >{{ data.item.name }}{{ selected(status) }}</v-chip>
+      >{{ data.item.name }}</v-chip>
     </template>
     <template v-slot:item="data">
       <template v-if="typeof data.item !== 'object'">
@@ -37,18 +37,17 @@ export default {
       dataStatus: Status
     };
   },
-  async created() {},
+  created() {
+    if(this.data) this.status = this.data
+  },
   methods: {
     remove() {
-      this.status = [];
-    },
-    selected(data) {
-      this.$emit("statusEmit", data);
+      this.status = "";
     }
   },
   watch: {
-    data() {
-      this.status = this.data;
+    status(val) {
+      this.$emit("statusEmit", val);
     }
   }
 };

@@ -1,16 +1,12 @@
 <template>
   <v-layout row wrap justify-center align-center>
-    <v-snackbar v-model="snackbar" :timeout="4000" top :color="messages.success ? 'green' : 'red'">
-      <span>{{messages.success ? messages.message : messages.error}}</span>
-      <v-btn text @click="snackbar = false" color="white">Close</v-btn>
-    </v-snackbar>
     <v-flex xs12 md10 md8>
       <v-card>
         <v-toolbar dark color="primary">
-          <v-toolbar-title>{{title}}</v-toolbar-title>
+          <v-toolbar-title>{{`Edit anime (${anime.title})`}}</v-toolbar-title>
         </v-toolbar>
         <v-card-text>
-          <img @click="editImage = !editImage" :src="imageUrl" height="150" v-if="imageUrl" />
+          <img @click="editImage = !editImage" :src="imageUrl" height="150" v-if="anime.thumbnail" />
           <v-file-input
             :disabled="editImage"
             v-model="thumbnail"
@@ -18,17 +14,25 @@
             accept="image/*"
             label="Thumbnail"
           ></v-file-input>
-          <v-text-field v-model="ro_title" label="Romaji Title"></v-text-field>
-          <v-text-field v-model="en_title" label="English Title"></v-text-field>
-          <v-text-field v-model="jp_title" label="Japan Title"></v-text-field>
-          <v-text-field v-model="premiered" label="Premiered"></v-text-field>
-          <Type :data="type" @typeEmit="(data) => type = data" />
-          <Status :data="status" @statusEmit="(data) => status = data" />
-          <Genres :data="genres" @genresEmit="(data) => genres = data" />
-          <Studios :data="studios" @studioEmit="(data) => studios = data" />
-          <Ratings :data="rating" @ratingEmit="(data) => rating = data" />
-          <Seasons :data="season" @seasonEmit="(data) => season = data" />
-          <v-textarea v-model="description" name="input-7-1" label="Descriptions"></v-textarea>
+          <img @click="editCover = !editCover" :src="coverUrl" height="150" v-if="anime.cover" />
+          <v-file-input
+            :disabled="editCover"
+            v-model="cover"
+            type="file"
+            accept="image/*"
+            label="Cover"
+          ></v-file-input>
+          <v-text-field v-model="editData.title" label="Romaji Title"></v-text-field>
+          <v-text-field v-model="editData.en" label="English Title"></v-text-field>
+          <v-text-field v-model="editData.jp" label="Japan Title"></v-text-field>
+          <v-text-field v-model="editData.premiered" label="Premiered"></v-text-field>
+          <Type :data="editData.type" @typeEmit="(data) => editData.type = data" />
+          <Status :data="editData.status" @statusEmit="(data) => editData.status = data" />
+          <Genres @genresEmit="(data) => editData.genres = data" />
+          <Studios :data="editData.studios" @studioEmit="(data) => editData.studios = data" />
+          <Ratings :data="editData.rating" @ratingEmit="(data) => editData.rating = data" />
+          <Seasons :data="editData.season" @seasonEmit="(data) => editData.season = data" />
+          <v-textarea v-model="editData.description" name="input-7-1" label="Descriptions"></v-textarea>
           <v-divider></v-divider>
         </v-card-text>
         <v-card-actions>
@@ -52,7 +56,7 @@
   </v-layout>
 </template>
 <script>
-import AnimeServices from "@/services/Anime";
+import { postUpdate, getUpdate } from "@/services/Anime";
 import Genres from "@/components/anime/text-field/Genres";
 import Studios from "@/components/anime/text-field/Studios";
 import Ratings from "@/components/anime/text-field/Ratings";
@@ -60,6 +64,25 @@ import Seasons from "@/components/anime/text-field/Seasons";
 import Type from "@/components/anime/text-field/Type";
 import Status from "@/components/anime/text-field/Status";
 export default {
+  async fetch({ store, params }) {
+    var headers = {
+      "X-User-Session": store.state.auth.userToken
+    };
+    var id = params.id;
+    var response = (await getUpdate(headers, id)).data;
+    store.dispatch("anime/animeData", response.data);
+  },
+  computed: {
+    data() {
+      return this.$store.state.anime.anime;
+    },
+    anime() {
+      return this.data.anime || "";
+    },
+    animemeta() {
+      return this.data.animemeta;
+    }
+  },
   components: {
     Genres,
     Studios,
@@ -70,96 +93,64 @@ export default {
   },
   head() {
     return {
-      title: this.title
+      title: this.anime.title
     };
   },
   data() {
     return {
-      ro_title: "",
-      en_title: "",
-      jp_title: "",
-      premiered: "",
-      type: "",
-      status: "",
-      genres: [],
-      studios: [],
-      rating: [],
-      season: [],
+      title: "",
+      editData: {},
       thumbnail: [],
-      description: "",
-      title: `Edit ${this.ro_title}`,
       imageUrl: "",
+      cover: [],
+      coverUrl: "",
       editImage: false,
-      snackbar: false,
-      messages: "",
-      autoUpdate: true,
+      editCover: false,
+      autoUpdate: false,
       isUpdating: false,
       countDown: 30
     };
   },
-  async created() {
-    var anime_id = this.$route.params.id;
-    var data = (await AnimeServices.getUpdate(anime_id)).data[0];
-    this.type = data.type;
-    this.status = data.status;
-    this.rating = data.rating;
-    this.ro_title = data.title;
-    this.imageUrl = data.thumbnail;
-    this.premiered = data.premiered;
-    this.description = data.description;
-    this.thumbnail = [
-      {
-        name: data.thumbnail
-          .split("/upload/cover/")
-          .splice(1)
-          .join()
-      }
-    ];
-
-    this.en_title =
-      data.animemeta
-        .filter(x => x.meta_key === "en_title")
-        .map(x => x.meta_value) || "";
-    this.jp_title =
-      data.animemeta
-        .filter(x => x.meta_key === "jp_title")
-        .map(x => x.meta_value) || "";
-    this.genres = data.terms
-      .filter(x => x.type === "genre")
-      .map(x => x.term_id);
-    this.studios = data.terms
-      .filter(x => x.type === "studio")
-      .map(x => x.term_id);
-    this.season = data.terms
-      .filter(x => x.type === "season")
-      .map(x => x.term_id)
-      .join();
+  created() {
+    if (this.anime) {
+      this.imageUrl = this.anime.thumbnail;
+      this.coverUrl = this.anime.cover;
+      this.editData = JSON.parse(JSON.stringify(this.anime));
+      this.editData.jp =
+        this.animemeta
+          .filter(x => x.meta_key === "jp_title")
+          .map(x => x.meta_value)
+          .join() || "";
+      this.editData.en =
+        this.animemeta
+          .filter(x => x.meta_key === "en_title")
+          .map(x => x.meta_value)
+          .join() || "";
+    } else {
+      return this.$router.push({ path: "/admin" });
+    }
   },
   mounted() {
     this.autoupdate();
   },
   methods: {
-    async sumbit(cb) {
+    async sumbit() {
+      var headers = {
+        "X-User-Session": this.$store.state.auth.userToken
+      };
       var formData = new FormData();
-      var terms = this.genres.concat(this.studios, this.season);
       var anime_id = this.$route.params.id;
 
-      formData.append("anime_id", anime_id);
-      formData.append("terms", terms);
-      formData.append("thumbnail", this.thumbnail);
-      formData.append("title", this.ro_title);
-      formData.append("en", this.en_title);
-      formData.append("jp", this.jp_title);
-      formData.append("type", this.type);
-      formData.append("status", this.status);
-      formData.append("premiered", this.premiered);
-      formData.append("rating", this.rating);
-      formData.append("description", this.description);
-      this.messages = await AnimeServices.postUpdate(formData);
+      formData.append(
+        "thumbnail",
+        this.thumbnail.size ? this.thumbnail : this.imageUrl
+      );
+      formData.append("cover", this.cover.size ? this.cover : this.coverUrl);
+      formData.append("data", JSON.stringify(this.editData));
+      var response = postUpdate(headers, formData);
       this.isUpdating = true;
-      this.snackbar = cb;
 
-      if (this.messages) {
+      if (response) {
         setTimeout(() => {
           this.isUpdating = false;
         }, 1000);
@@ -195,11 +186,11 @@ export default {
     imageUrl() {
       this.editImage = true;
     },
+    coverUrl() {
+      this.editCover = true;
+    },
     autoUpdate(val) {
       if (val) this.autoupdate();
-    },
-    ro_title(val) {
-      this.title = `Edit anime (${val})`;
     },
     thumbnail(file) {
       if (file && file.length === undefined) {
@@ -211,6 +202,18 @@ export default {
       }
       if (!file) {
         this.imageUrl = "";
+      }
+    },
+    cover(file) {
+      if (file && file.length === undefined) {
+        const fr = new FileReader();
+        fr.readAsDataURL(file);
+        fr.addEventListener("load", () => {
+          this.coverUrl = fr.result;
+        });
+      }
+      if (!file) {
+        this.coverUrl = "";
       }
     }
   }

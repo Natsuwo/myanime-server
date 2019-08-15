@@ -1,24 +1,20 @@
 <template>
   <v-layout row wrap justify-center align-center>
-    <v-snackbar v-model="snackbar" :timeout="4000" top :color="messages.success ? 'green' : 'red'">
-      <span>{{messages.success ? messages.message : messages.error}}</span>
-      <v-btn text @click="snackbar = false" color="white">Close</v-btn>
-    </v-snackbar>
     <v-flex xs12 md10 md8>
       <v-card>
         <v-toolbar dark color="primary">
           <v-toolbar-title>{{ titleHead }}</v-toolbar-title>
         </v-toolbar>
         <v-card-text>
-          <Anime @episodeAnimeEmit="(data) => anime = data" />
-          <v-text-field v-model="source" label="Source"></v-text-field>
-          <v-text-field v-model="number" label="Number"></v-text-field>
-          <Type @episodeTypeEmit="(data) => type = data" />
-          <Audio @episodeAudioEmit="(data) => audio = data" />
-          <Subtitle @episodeSubtitleEmit="(data) => subtitle = data" />
-          <Fansub @episodeFansubEmit="(data) => fansub = data" />
-          <v-text-field v-model="title" label="Title"></v-text-field>
-          <v-textarea v-model="description" name="input-7-1" label="Description"></v-textarea>
+          <Anime @episodeAnimeEmit="(data) => form.anime = data" />
+          <v-text-field :rules="[rules.isValid]" v-model="form.source" label="Source"></v-text-field>
+          <v-text-field v-model="form.number" label="Number"></v-text-field>
+          <Type @episodeTypeEmit="(data) => form.type = data" />
+          <Audio @episodeAudioEmit="(data) => form.audio = data" />
+          <Subtitle @episodeSubtitleEmit="(data) => form.subtitle = data" />
+          <Fansub @episodeFansubEmit="(data) => form.fansub = data" />
+          <v-text-field v-model="form.title" label="Title"></v-text-field>
+          <v-textarea v-model="form.description" name="input-7-1" label="Description"></v-textarea>
           <v-btn @click="submit" color="primary">Submit</v-btn>
         </v-card-text>
       </v-card>
@@ -31,7 +27,8 @@ import Audio from "@/components/episode/Audio";
 import Subtitle from "@/components/episode/Subtitle";
 import Fansub from "@/components/episode/Fansub";
 import Anime from "@/components/episode/Anime";
-import EpisodeServices from "@/services/Episode";
+import { addNew } from "@/services/Episode";
+import { isValid } from "@/plugins/valid";
 export default {
   components: {
     Type,
@@ -48,43 +45,36 @@ export default {
   data() {
     return {
       titleHead: "Add new (Episode)",
-      anime: "",
-      source: "",
-      number: 0,
-      title: "",
-      type: "",
-      audio: "",
-      subtitle: "",
-      fansub: "",
-      description: "",
-      messages: "",
-      snackbar: false
+      form: {},
+      rules: {
+        isValid: v => !v || isValid(v) || "Source not valid"
+      }
     };
   },
   methods: {
     async submit() {
-      var form = {
-        anime_id: this.anime,
-        source: this.source,
-        number: this.number,
-        title: this.title,
-        type: this.type,
-        audio: this.audio,
-        subtitle: this.subtitle,
-        fansub: this.fansub,
-        description: this.description
+      var headers = {
+        "X-User-Session": this.$store.state.auth.userToken
       };
-      this.messages = await EpisodeServices.post(form);
-      this.snackbar = true;
-      if(this.messages.success) {
+      var form = {
+        anime_id: this.form.anime,
+        audio: this.form.audio,
+        description: this.form.description,
+        fansub: this.form.fansub,
+        number: this.form.number,
+        source: this.form.source,
+        subtitle: this.form.subtitle,
+        title: this.form.title,
+        type: this.form.type
+      };
+      var response = await addNew(headers, form);
+      if (response.data.success) {
         setTimeout(() => {
-          this.$router.push({path: `/admin/episode/edit/${this.messages.episode_id}`})
+          this.$router.push({
+            path: `/admin/episode/edit/${response.data.episode_id}`
+          });
         }, 1000);
       }
-    },
-    remove(item) {
-      const index = this.friends.indexOf(item.name);
-      if (index >= 0) this.friends.splice(index, 1);
     }
   }
 };

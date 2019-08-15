@@ -42,6 +42,7 @@ module.exports = {
   ** Nuxt.js modules
   */
   modules: [
+    'cookie-universal-nuxt'
   ],
   /*
   ** vuetify module configuration

@@ -5,16 +5,15 @@
     chips
     label="Studios"
     item-text="key"
-    item-value="term_id"
-    multiple
+    item-value="key"
   >
     <template v-slot:selection="data">
       <v-chip
         :input-value="data.selected"
         close
         class="chip--select-multi"
-        @click:close="remove(data.item)"
-      >{{ data.item.key }}{{ selected(studios) }}</v-chip>
+        @click:close="remove()"
+      >{{ data.item.key }}</v-chip>
     </template>
     <template v-slot:item="data">
       <template v-if="typeof data.item !== 'object'">
@@ -29,32 +28,29 @@
   </v-autocomplete>
 </template>
 <script>
-import TermServices from "@/services/Term";
 export default {
   props: ["data"],
   data() {
     return {
-      studios: [],
-      dataStudios: []
+      studios: []
     };
   },
-  async created() {
-    var type = "studio"
-    var studios = (await TermServices.get(type)).data;
-    this.dataStudios = studios;
+  computed: {
+    dataStudios() {
+      return this.$store.state.term.terms.filter(x => x.type === "studio");
+    }
+  },
+  created() {
+    if (this.data) this.studios = this.data;
   },
   methods: {
     async remove(item) {
-      const index = this.studios.indexOf(item.term_id);
-      if (index >= 0) this.studios.splice(index, 1);
-    },
-    selected(data) {
-      this.$emit("studioEmit", data);
+      this.studios = ""
     }
   },
   watch: {
-    data() {
-      this.studios = this.data;
+    studios(val) {
+      this.$emit("studioEmit", val);
     }
   }
 };

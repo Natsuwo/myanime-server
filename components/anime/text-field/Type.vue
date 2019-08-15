@@ -13,7 +13,7 @@
         close
         class="chip--select-multi"
         @click:close="remove"
-      >{{ data.item.name }}{{ selected(types) }}</v-chip>
+      >{{ data.item.name }}</v-chip>
     </template>
     <template v-slot:item="data">
       <template v-if="typeof data.item !== 'object'">
@@ -33,22 +33,21 @@ export default {
   props: ["data"],
   data() {
     return {
-      types: "",
+      types: [],
       dataTypes: Types
     };
   },
-  async mounted() {},
+  created() {
+    if (this.data) this.types = this.data;
+  },
   methods: {
     remove() {
-      this.types = [];
-    },
-    selected(data) {
-      this.$emit("typeEmit", data);
+      this.types = "";
     }
   },
   watch: {
-    data() {
-      this.types = this.data;
+    types(val) {
+      this.$emit("typeEmit", val);
     }
   }
 };

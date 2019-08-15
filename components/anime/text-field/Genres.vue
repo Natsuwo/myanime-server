@@ -14,7 +14,7 @@
         close
         class="chip--select-multi"
         @click:close="remove(data.item)"
-      >{{ data.item.key }}{{ selected(genres) }}</v-chip>
+      >{{ data.item.key }}</v-chip>
     </template>
     <template v-slot:item="data">
       <template v-if="typeof data.item !== 'object'">
@@ -29,32 +29,39 @@
   </v-autocomplete>
 </template>
 <script>
-import TermServices from "@/services/Term";
 export default {
-  props: ["data"],
   data() {
     return {
-      genres: [],
-      dataGenres: []
+      genres: []
     };
   },
-  async created() {
-    var type = "genre";
-    var genres = (await TermServices.get(type)).data;
-    this.dataGenres = genres;
+  computed: {
+    animemeta() {
+      return this.$store.state.anime.anime.animemeta || "";
+    },
+    data() {
+      return this.animemeta
+        ? this.animemeta
+            .filter(x => x.meta_key === "genre")
+            .map(x => x.meta_value)[0]
+        : "";
+    },
+    dataGenres() {
+      return this.$store.state.term.terms.filter(x => x.type === "genre");
+    }
+  },
+  created() {
+    if (this.data) this.genres = [...this.data];
   },
   methods: {
     async remove(item) {
       const index = this.genres.indexOf(item.term_id);
       if (index >= 0) this.genres.splice(index, 1);
-    },
-    selected(data) {
-      this.$emit("genresEmit", data);
     }
   },
   watch: {
-    data(val) {
-      this.genres = this.data;
+    genres(val) {
+      this.$emit("genresEmit", val);
     }
   }
 };

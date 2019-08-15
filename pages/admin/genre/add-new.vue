@@ -1,9 +1,5 @@
 <template>
   <v-layout row wrap justify-center align-center>
-    <v-snackbar v-model="snackbar" :timeout="4000" top :color="messages.success ? 'green' : 'red'">
-      <span>{{messages.success ? messages.message : messages.error}}</span>
-      <v-btn text @click="snackbar = false" color="white">Close</v-btn>
-    </v-snackbar>
     <v-flex xs12 md10 md8>
       <v-card>
         <v-toolbar dark color="primary">
@@ -19,7 +15,6 @@
   </v-layout>
 </template>
 <script>
-import TermServices from "@/services/Term";
 export default {
   head() {
     return {
@@ -30,24 +25,27 @@ export default {
     return {
       key: "",
       description: "",
-      messages: "",
-      snackbar: false,
       title: "Add new (Genres)"
     };
   },
   methods: {
     async submit() {
-      var form = {
+      var headers = {
+        "X-User-Session": this.$store.state.auth.userToken
+      };
+      var formData = {
         type: "genre",
         key: this.key,
         description: this.description
       };
-      this.messages = await TermServices.post(form);
-      this.snackbar = true;
-      if (this.messages.success) {
+      var response = await this.$store.dispatch("term/addNew", {
+        headers,
+        formData
+      });
+      if (response.success) {
         setTimeout(() => {
           this.$router.push({
-            path: `/admin/genre/edit/${this.messages.term_id}`
+            path: `/admin/genre/edit/${response.data.term_id}`
           });
         }, 1000);
       }

@@ -37,18 +37,17 @@
   </v-autocomplete>
 </template>
 <script>
-import TermServices from "@/services/Term";
 export default {
   props: ["data"],
   data() {
     return {
-      fansub: [],
-      dataFansub: []
+      fansub: []
     };
   },
-  async created() {
-    var type = "fansub";
-    this.dataFansub = (await TermServices.get(type)).data;
+  computed: {
+    dataFansub() {
+      return this.$store.state.term.terms.filter(x => x.type === "fansub");
+    }
   },
   methods: {
     remove(item) {
