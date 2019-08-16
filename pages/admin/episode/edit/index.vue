@@ -7,30 +7,34 @@
       <div class="layout">
         <v-spacer></v-spacer>
         <v-flex xs6 pt-3>
-          <!-- <v-text-field
+          <v-text-field
             @input="searchTimeOut(onPageChange)"
             v-model="search"
             solo-inverted
             clearable
             label="Search anime name"
             append-icon="mdi-magnify"
-          ></v-text-field> -->
+          ></v-text-field>
         </v-flex>
         <v-spacer></v-spacer>
       </div>
     </div>
-    <v-data-table
-      :items="episodes"
-      :headers="headers"
-      class="elevation-1 my-table"
-      hide-default-footer
-    >
-      <template v-slot:item.updated_at="{ item }">{{ getTime(item.updated_at) }}</template>
-      <template v-slot:item.control="{ item }">
-        <v-icon @click="editEpisode(item.episode_id)">mdi-pencil</v-icon>
-        <v-icon @click="removeEpisode(item)">mdi-delete</v-icon>
-      </template>
-    </v-data-table>
+    <no-ssr>
+      <v-data-table
+        :items="episodes"
+        :headers="headers"
+        class="elevation-1 my-table"
+        :items-per-page="20"
+        hide-default-footer
+      >
+        <template v-slot:item.anime_title="{ item }">{{ getTitle(item.anime_id) }}</template>
+        <template v-slot:item.updated_at="{ item }">{{ getTime(item.updated_at) }}</template>
+        <template v-slot:item.control="{ item }">
+          <v-icon @click="editEpisode(item.episode_id)">mdi-pencil</v-icon>
+          <v-icon @click="removeEpisode(item)">mdi-delete</v-icon>
+        </template>
+      </v-data-table>
+    </no-ssr>
     <div class="text-center pt-4">
       <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination>
     </div>
@@ -38,58 +42,52 @@
 </template>
 
 <script>
-import EpisodeServices from "@/services/Episode";
+import { get } from "@/services/Episode";
+import headers from "@/items/episodetab.json";
 export default {
+  async fetch({ store }) {
+    var headers = {
+      "X-User-Session": store.state.auth.userToken
+    };
+    var response = (await get(headers)).data;
+    store.dispatch("episode/episodesData", response);
+  },
   head() {
     return {
       title: this.title
     };
   },
+  computed: {
+    episodes() {
+      return this.$store.state.episode.episodes;
+    },
+    count() {
+      return this.$store.state.episode.count;
+    },
+    length() {
+      return this.$store.state.episode.meta.totalPage;
+    },
+    animes() {
+      return this.$store.state.episode.animes;
+    }
+  },
   data() {
     return {
       title: "Episodes",
-      episodes: [],
-      count: 0,
-      headers: [
-        { text: "Anime", value: "anime_title", sortable: true, align: "left" },
-        { text: "Episode", value: "number", sortable: false, align: "left" },
-        { text: "Title", value: "title", sortable: false, align: "left" },
-        { text: "Type", value: "type", sortable: false, align: "left" },
-        { text: "Audio", value: "audio", sortable: false, align: "left" },
-        { text: "Subtitle", value: "subtitle", sortable: false, align: "left" },
-        { text: "Fansub", value: "fansub", sortable: false, align: "left" },
-        {
-          text: "Last Update",
-          value: "updated_at",
-          sortable: true,
-          align: "left"
-        },
-        { text: "Views", value: "views", sortable: true, align: "right" },
-        { text: "Controls", value: "control", sortable: false, align: "right" }
-      ],
+      headers: headers,
       search: "",
       page: 1,
-      length: 0,
       limit: null
     };
   },
-  async created() {
-    var episodes = await EpisodeServices.get();
-    this.episodes = episodes.data;
-    this.count = episodes.count;
-    this.length = episodes.meta.totalPage
-  },
   methods: {
+    getTitle(id) {
+      return this.animes.filter(x => x.anime_id === id)[0].title || "";
+    },
     async onPageChange() {
       var headers = { "X-User-Session": this.$store.state.auth.userToken };
-      var response = await EpisodeServices.get(
-        headers,
-        this.limit,
-        this.page,
-        this.search
-      );
-      this.episodes = response.data;
-      this.length = response.meta.totalPage
+      var response = await get(headers, this.limit, this.page, this.search);
+      return this.$store.dispatch("episode/episodesData", response.data);
     },
     async searchTimeOut(cb) {
       if (this.timer) {
@@ -112,13 +110,12 @@ export default {
       return expired;
     },
     async removeEpisode(item) {
-      const index = this.episodes.indexOf(item);
-      if (index >= 0) this.episodes.splice(index, 1);
+      var headers = { "X-User-Session": this.$store.state.auth.userToken };
       var form = {
         anime_id: item.anime_id,
         episode_id: item.episode_id
       };
-      await EpisodeServices.removeEpisode(form);
+      return this.$store.dispatch("episode/removeEpisode", { headers, form, item });
     },
     editEpisode(id) {
       this.$router.push({ path: `edit/${id}` });
