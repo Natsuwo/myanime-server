@@ -3,7 +3,7 @@
     <h1>{{title}} ({{count}})</h1>
     <v-btn :to="'add-new'" color="primary">Add New</v-btn>
     <div class="text-center">
-      <!-- <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination> -->
+      <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination>
       <div class="layout">
         <v-spacer></v-spacer>
         <v-flex xs6 pt-3>
@@ -12,9 +12,9 @@
             v-model="search"
             solo-inverted
             clearable
-            label="Search drive ID or file name (you can search a multi value)"
-            append-icon="search"
-          ></v-text-field>-->
+            label="Search anime name"
+            append-icon="mdi-magnify"
+          ></v-text-field> -->
         </v-flex>
         <v-spacer></v-spacer>
       </div>
@@ -32,7 +32,7 @@
       </template>
     </v-data-table>
     <div class="text-center pt-4">
-      <!-- <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination> -->
+      <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination>
     </div>
   </div>
 </template>
@@ -66,17 +66,40 @@ export default {
         },
         { text: "Views", value: "views", sortable: true, align: "right" },
         { text: "Controls", value: "control", sortable: false, align: "right" }
-      ]
+      ],
+      search: "",
+      page: 1,
+      length: 0,
+      limit: null
     };
   },
   async created() {
     var episodes = await EpisodeServices.get();
     this.episodes = episodes.data;
     this.count = episodes.count;
+    this.length = episodes.meta.totalPage
   },
   methods: {
-    async onPageChange() {},
-    async searchTimeOut(cb) {},
+    async onPageChange() {
+      var headers = { "X-User-Session": this.$store.state.auth.userToken };
+      var response = await EpisodeServices.get(
+        headers,
+        this.limit,
+        this.page,
+        this.search
+      );
+      this.episodes = response.data;
+      this.length = response.meta.totalPage
+    },
+    async searchTimeOut(cb) {
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+      this.timer = setTimeout(() => {
+        return cb();
+      }, 500);
+    },
     getTime(time) {
       var date = new Date(time);
       var dd = String(date.getDate()).padStart(2, "0");

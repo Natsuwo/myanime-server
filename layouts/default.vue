@@ -17,6 +17,7 @@ import NavBar from "@/components/main/default/NavBar";
 import NavDrawer from "@/components/main/default/NavDrawer";
 import Authentication from "@/services/Authentication";
 export default {
+  middleware: 'auth',
   data() {
     return {
       mini: false,

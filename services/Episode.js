@@ -5,8 +5,11 @@ export function addNew(headers, form) {
 }
 
 export default {
-    async get() {
-        return (await Api().get('/server/episode/get')).data
+    async get(headers, limit, page, search) {
+        var limitQuery = limit ? `?limit=${limit}` : '?limit=10'
+        var pageQuery = page ? `&page=${page}` : ''
+        var searchQuery = search ? `&q=${search}` : ''
+        return (await Api(headers).get(`/server/episode/get${limitQuery}${pageQuery}${searchQuery}`)).data
     },
     async getUpdate(id) {
         return (await Api().get(`/server/episode/update?episode_id=${id}`)).data

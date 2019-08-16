@@ -56,13 +56,6 @@ export default {
     this.items = Items.items;
     this.multiItems = Items.multiItems;
   },
-  methods: {
-    async logout() {
-      var logout = await Authentication.logout();
-      this.$store.commit("logout", true);
-      this.$router.push({ path: "/" });
-    }
-  },
   computed: {
     bg() {
       return this.background ? "https://i.imgur.com/pj0h7aO.jpg" : undefined;
