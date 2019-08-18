@@ -1,26 +1,26 @@
 <template>
   <v-layout row wrap justify-center align-center>
-    <v-snackbar v-model="snackbar" :timeout="4000" top :color="messages.success ? 'green' : 'red'">
-      <span>{{messages.success ? messages.message : messages.error}}</span>
-      <v-btn text @click="snackbar = false" color="white">Close</v-btn>
-    </v-snackbar>
     <v-flex xs12 md10 md8>
       <v-card>
         <v-toolbar dark color="primary">
           <v-toolbar-title>{{ titleHead }}</v-toolbar-title>
         </v-toolbar>
         <v-card-text>
-          <Anime :data="anime" @episodeAnimeEmit="(data) => anime = data" />
-          <v-text-field v-model="source" label="Source"></v-text-field>
-          <v-text-field v-model="number" label="Number"></v-text-field>
-          <Type :data="type" @episodeTypeEmit="(data) => type = data" />
-          <Audio :data="audio" @episodeAudioEmit="(data) => audio = data" />
-          <Subtitle :data="subtitle" @episodeSubtitleEmit="(data) => subtitle = data" />
-          <Fansub :data="fansub" @episodeFansubEmit="(data) => fansub = data" />
-          <v-text-field v-model="title" label="Title"></v-text-field>
-          <v-textarea v-model="description" name="input-7-1" label="Description"></v-textarea>
-          <v-btn @click="submit" color="primary">Submit</v-btn>
-          <v-btn @click="removeEpisode" color="red">Remove</v-btn>
+          <Anime :data="dataEdit.anime_id" @episodeAnimeEmit="data => dataEdit.anime_id = data" />
+          <v-text-field v-model="dataEdit.source" disabled label="Source"></v-text-field>
+          <v-text-field v-model="dataEdit.number" label="Number"></v-text-field>
+          <Type :data="dataEdit.type" @episodeTypeEmit="data => dataEdit.type = data" />
+          <Audio :data="dataEdit.audio" @episodeAudioEmit="data => dataEdit.audio = data" />
+          <Subtitle
+            :data="dataEdit.subtitle"
+            @episodeSubtitleEmit="data => dataEdit.subtitle = data"
+          />
+          <Fansub :data="dataEdit.fansub" @episodeFansubEmit="data => dataEdit.fansub = data" />
+          <v-text-field v-model="dataEdit.title" label="Title"></v-text-field>
+          <v-flex class="text-right">
+            <v-btn @click="submit" color="primary">Submit</v-btn>
+            <v-btn @click="removeEpisode" color="red">Remove</v-btn>
+          </v-flex>
         </v-card-text>
       </v-card>
     </v-flex>
@@ -31,9 +31,20 @@ import Type from "@/components/episode/Type";
 import Audio from "@/components/episode/Audio";
 import Subtitle from "@/components/episode/Subtitle";
 import Fansub from "@/components/episode/Fansub";
-import Anime from "@/components/episode/AnimeEdit";
-import EpisodeServices from "@/services/Episode";
+import Anime from "@/components/episode/Anime";
+import { getUpdate, update, removeEpisode } from "@/services/Episode";
+import md5 from "md5";
+import axios from "axios";
 export default {
+  async fetch({ store, params, redirect }) {
+    var headers = {
+      "X-User-Session": store.state.auth.userToken
+    };
+    var id = params.id;
+    var response = (await getUpdate(headers, id)).data;
+    if (!response.data) return redirect("/admin/episode/edit");
+    store.dispatch("episode/episodeData", response.data);
+  },
   components: {
     Type,
     Audio,
@@ -49,60 +60,37 @@ export default {
   data() {
     return {
       titleHead: "Edit episode",
-      anime: "",
-      source: "",
-      number: 0,
-      title: "",
-      type: "",
-      audio: "",
-      subtitle: "",
-      fansub: "",
-      description: "",
-      messages: "",
-      snackbar: false
+      dataEdit: {},
+      headers: {
+        "X-User-Session": this.$store.state.auth.userToken
+      }
     };
   },
+  computed: {
+    data() {
+      return this.$store.state.episode.episode;
+    }
+  },
   async created() {
-    var episode_id = this.$route.params.id;
-    var data = (await EpisodeServices.getUpdate(episode_id)).data;
-    this.anime = data.anime_id;
-    this.source = data.source;
-    this.number = data.number;
-    this.title = data.title;
-    this.type = data.type;
-    this.audio = data.audio;
-    this.subtitle = data.subtitle;
-    this.fansub = data.fansub;
-    this.description = data.description;
+    this.dataEdit = JSON.parse(JSON.stringify(this.data));
   },
   methods: {
     async submit() {
-      var form = {
-        episode_id: this.$route.params.id,
-        anime_id: this.anime,
-        source: this.source,
-        number: this.number,
-        title: this.title,
-        type: this.type,
-        audio: this.audio,
-        subtitle: this.subtitle,
-        fansub: this.fansub,
-        description: this.description
-      };
-      this.messages = await EpisodeServices.update(form);
-      this.snackbar = true;
+      var response = await update(this.headers, this.dataEdit);
+      this.$store.commit("snackbar/snackBar", {
+        active: true,
+        message: response.data
+      });
     },
-    async removeEpisode(item) {
-      var form = {
-        anime_id: this.anime,
-        episode_id: this.$route.params.id
-      };
-      this.messages = await EpisodeServices.removeEpisode(form);
-      this.snackbar = true;
-      if (this.messages.success) {
-        setTimeout(() => {
-          this.$router.push({ path: "/admin/episode/edit" });
-        }, 1000);
+    async removeEpisode() {
+      var response = await removeEpisode(this.headers, this.dataEdit);
+      this.$store.commit("snackbar/snackBar", {
+        active: true,
+        message: response.data
+      });
+      if (response.data.success) {
+        this.$router.push({ path: "/admin/episode/edit" });
+        return this.$store.dispatch("episode/removeEpisode", this.data);
       }
     }
   },

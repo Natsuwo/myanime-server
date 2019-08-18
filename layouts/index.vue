@@ -3,6 +3,7 @@
     <v-layout row wrap justify-center align-center>
       <v-content class="text-center">
         <v-container>
+          <SnackBar />
           <nuxt />
         </v-container>
       </v-content>
@@ -11,18 +12,10 @@
 </template>
 
 <script>
-import Authentication from "@/services/Authentication";
+import SnackBar from "@/components/modules/SnackBar";
 export default {
-  // async mounted() {
-  //   try {
-  //     var checkUser = await Authentication.checkUserToken();
-  //     if (checkUser.success === false) {
-  //       return this.$store.commit("loading", false);
-  //     }
-  //     this.$store.dispatch("loginActions", true);
-  //   } catch (err) {
-  //     console.log(err.message);
-  //   }
-  // }
+  components: {
+    SnackBar
+  }
 };
 </script>

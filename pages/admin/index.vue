@@ -25,6 +25,7 @@ export default {
     };
   },
   async fetch({ store }) {
+    store.commit("snackbar/snackBar", { active: false, message: "" });
     var headers = {
       "X-User-Session": store.state.auth.userToken
     };

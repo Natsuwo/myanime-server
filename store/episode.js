@@ -1,5 +1,3 @@
-import { removeEpisode } from "../services/Episode";
-
 const EPISODES = 'episodes'
 const EPISODE = 'episode'
 const DELETE = 'delete'
@@ -22,8 +20,7 @@ export const actions = {
         return commit(EPISODE, { data })
     },
     async removeEpisode({ commit }, data) {
-        var response = await removeEpisode(data.headers, data.form)
-        return commit(DELETE, { res: response.data, item: data.item })
+        return commit(DELETE, { data })
     }
 }
 
@@ -35,13 +32,12 @@ export const mutations = {
         state.animes = res.animes
     },
     [EPISODE](state, { data }) {
-        state.anime = data
+        state.episode = data
     },
-    [DELETE](state, { res, item }) {
-        if (res.success) {
-            const index = state.episodes.indexOf(item);
-            if (index >= 0) state.episodes.splice(index, 1);
-        }
+    [DELETE](state, { data }) {
+        const index = state.episodes.indexOf(data);
+        if (index >= 0) state.episodes.splice(index, 1);
+
     }
 
 

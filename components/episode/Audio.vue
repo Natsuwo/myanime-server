@@ -18,7 +18,7 @@
         <v-avatar left>
           <v-img :src="data.item.value"></v-img>
         </v-avatar>
-        {{ data.item.key }}{{ selected(audio) }}
+        {{ data.item.key }}
       </v-chip>
     </template>
     <template v-slot:item="data">
@@ -49,17 +49,17 @@ export default {
       return this.$store.state.term.terms.filter(x => x.type === "language");
     }
   },
+  created() {
+    if (this.data) this.audio = this.data;
+  },
   methods: {
     remove(item) {
       this.audio = [];
-    },
-    selected(data) {
-      this.$emit("episodeAudioEmit", data);
     }
   },
   watch: {
-    data() {
-      this.audio = this.data;
+    audio(val) {
+      this.$emit("episodeAudioEmit", val);
     }
   }
 };

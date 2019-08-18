@@ -93,6 +93,10 @@ export default {
       return expired;
     },
     deleteComments() {
+      // this.$store.commit("snackbar/snackBar", {
+      //   active: true,
+      //   message: messages
+      // });
       // const index = this.animes.indexOf(item);
       // if (index >= 0) this.animes.splice(index, 1);
       // var form = {

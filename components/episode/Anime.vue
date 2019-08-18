@@ -9,11 +9,16 @@
     hide-selected
   >
     <template v-slot:selection="data">
-      <v-chip :input-value="data.selected" close class="chip--select-multi" @click:close="remove(data.item)">
+      <v-chip
+        :input-value="data.selected"
+        close
+        class="chip--select-multi"
+        @click:close="remove(data.item)"
+      >
         <v-avatar left>
           <v-img :src="data.item.thumbnail"></v-img>
         </v-avatar>
-        {{ data.item.title }}{{ selected(anime) }}
+        {{ data.item.title }}
       </v-chip>
     </template>
     <template v-slot:item="data">
@@ -21,7 +26,7 @@
         <v-list-item-content v-text="data.item"></v-list-item-content>
       </template>
       <template v-else>
-         <v-list-item-avatar>
+        <v-list-item-avatar>
           <img :src="data.item.thumbnail" />
         </v-list-item-avatar>
         <v-list-item-content>
@@ -32,8 +37,9 @@
   </v-autocomplete>
 </template>
 <script>
-import EpisodeServices from "@/services/Episode";
+import { getAnime } from "@/services/Episode";
 export default {
+  props: ["data"],
   data() {
     return {
       anime: [],
@@ -41,14 +47,17 @@ export default {
     };
   },
   async created() {
-    this.dataAnime = (await EpisodeServices.getAnime()).data;
+    if (this.data) this.anime = this.data;
+    this.dataAnime = (await getAnime()).data.data;
   },
   methods: {
     remove(item) {
       this.anime = [];
-    },
-    selected(data) {
-      this.$emit("episodeAnimeEmit", data);
+    }
+  },
+  watch: {
+    anime(val) {
+      this.$emit("episodeAnimeEmit", val);
     }
   }
 };

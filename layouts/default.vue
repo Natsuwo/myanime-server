@@ -6,6 +6,7 @@
     </no-ssr>
     <v-content>
       <v-container grid-list-xs>
+        <SnackBar />
         <nuxt />
       </v-container>
     </v-content>
@@ -16,6 +17,7 @@
 import NavBar from "@/components/main/default/NavBar";
 import NavDrawer from "@/components/main/default/NavDrawer";
 import Authentication from "@/services/Authentication";
+import SnackBar from "@/components/modules/SnackBar";
 export default {
   middleware: 'auth',
   data() {
@@ -26,6 +28,7 @@ export default {
   },
   components: {
     NavBar,
+    SnackBar,
     NavDrawer
   }
 };

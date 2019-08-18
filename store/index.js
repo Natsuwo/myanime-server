@@ -29,7 +29,7 @@ export const actions = {
             var headers = {
                 "x-user-session": cookie.USER_ACCESS_TOKEN || ""
             }
-            var checkAuth = (await checkUserToken({ headers })).data
+            var checkAuth = (await checkUserToken(headers)).data
             if (checkAuth.success) {
                 commit('setAuth', { user_id: checkAuth.user_id, token: checkAuth.token, isLogin: true })
             }

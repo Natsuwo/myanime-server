@@ -18,7 +18,7 @@
         <v-avatar left>
           <v-img :src="data.item.value"></v-img>
         </v-avatar>
-        {{ data.item.key }}{{ selected(fansub) }}
+        {{ data.item.key }}
       </v-chip>
     </template>
     <template v-slot:item="data">
@@ -42,24 +42,24 @@ export default {
   data() {
     return {
       fansub: []
-    };
+    }
   },
   computed: {
     dataFansub() {
       return this.$store.state.term.terms.filter(x => x.type === "fansub");
     }
   },
+  created() {
+    if (this.data) this.fansub = this.data;
+  },
   methods: {
     remove(item) {
       this.fansub = [];
-    },
-    selected(data) {
-      this.$emit("episodeFansubEmit", data);
     }
   },
   watch: {
-    data() {
-      this.fansub = this.data;
+    fansub(val) {
+      this.$emit("episodeFansubEmit", val);
     }
   }
 };

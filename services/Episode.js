@@ -11,19 +11,19 @@ export function get(headers, limit, page, search) {
     return Api(headers).get(`/server/episode/get${limitQuery}${pageQuery}${searchQuery}`)
 }
 
-export function removeEpisode(headers, form) {
-    return Api(headers).post('/server/episode/remove-episode', form)
+
+export function getUpdate(headers, id) {
+    return Api(headers).get(`/server/episode/update?episode_id=${id}`)
 }
 
-export default {
-    async getUpdate(id) {
-        return (await Api().get(`/server/episode/update?episode_id=${id}`)).data
-    },
-    async getAnime(form) {
-        return (await Api().get('/server/episode/get-anime', form)).data
-    },
-    async update(form) {
-        return (await Api().post('/server/episode/update', form)).data
-    },
+export function update(headers, form) {
+    return Api(headers).put('/server/episode/update', form)
+}
 
+export function getAnime(headers) {
+    return Api(headers).get('/server/episode/get-anime')
+}
+
+export function removeEpisode(headers, form) {
+    return Api(headers).delete('/server/episode/remove-episode', { data: form })
 }

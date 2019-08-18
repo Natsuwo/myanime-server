@@ -6,16 +6,21 @@
           <v-toolbar-title>{{ titleHead }}</v-toolbar-title>
         </v-toolbar>
         <v-card-text>
-          <Anime @episodeAnimeEmit="(data) => form.anime = data" />
-          <v-text-field :rules="[rules.isValid]" v-model="form.source" label="Source"></v-text-field>
-          <v-text-field v-model="form.number" label="Number"></v-text-field>
-          <Type @episodeTypeEmit="(data) => form.type = data" />
-          <Audio @episodeAudioEmit="(data) => form.audio = data" />
-          <Subtitle @episodeSubtitleEmit="(data) => form.subtitle = data" />
-          <Fansub @episodeFansubEmit="(data) => form.fansub = data" />
-          <v-text-field v-model="form.title" label="Title"></v-text-field>
-          <v-textarea v-model="form.description" name="input-7-1" label="Description"></v-textarea>
-          <v-btn @click="submit" color="primary">Submit</v-btn>
+          <v-form ref="form" v-model="valid">
+            <Anime @episodeAnimeEmit="data => form.anime_id = data" />
+            <v-text-field
+              :rules="[rules.isValid, rules.required]"
+              v-model="form.source"
+              label="Source"
+            ></v-text-field>
+            <v-text-field :rules="[rules.number]" v-model="form.number" label="Number"></v-text-field>
+            <Type @episodeTypeEmit="data => form.type = data" />
+            <Audio @episodeAudioEmit="data => form.audio = data" />
+            <Subtitle @episodeSubtitleEmit="data => form.subtitle = data" />
+            <Fansub @episodeFansubEmit="data => form.fansub = data" />
+            <v-text-field v-model="form.title" label="Title"></v-text-field>
+            <v-btn @click="submit" color="primary">Submit</v-btn>
+          </v-form>
         </v-card-text>
       </v-card>
     </v-flex>
@@ -46,28 +51,27 @@ export default {
     return {
       titleHead: "Add new (Episode)",
       form: {},
+      valid: true,
       rules: {
+        number: v => /^[0-9]+$/.test(v) || "Number Only",
+        required: v => !!v || "source is required",
         isValid: v => !v || isValid(v) || "Source not valid"
       }
     };
   },
   methods: {
     async submit() {
+      if (!this.$refs.form.validate()) {
+        return;
+      }
       var headers = {
         "X-User-Session": this.$store.state.auth.userToken
       };
-      var form = {
-        anime_id: this.form.anime,
-        audio: this.form.audio,
-        description: this.form.description,
-        fansub: this.form.fansub,
-        number: this.form.number,
-        source: this.form.source,
-        subtitle: this.form.subtitle,
-        title: this.form.title,
-        type: this.form.type
-      };
-      var response = await addNew(headers, form);
+      var response = await addNew(headers, this.form);
+      this.$store.commit("snackbar/snackBar", {
+        active: true,
+        message: response.data
+      });
       if (response.data.success) {
         setTimeout(() => {
           this.$router.push({
@@ -75,6 +79,11 @@ export default {
           });
         }, 1000);
       }
+    }
+  },
+  watch: {
+    form(v) {
+      console.log(v);
     }
   }
 };

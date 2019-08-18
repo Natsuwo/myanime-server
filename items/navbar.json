@@ -127,7 +127,18 @@
         {
             "icon": "mdi-settings",
             "title": "Settings",
-            "items": []
+            "items": [
+                {
+                    "icon": "mdi-account-plus",
+                    "title": "Add new (User)",
+                    "to": "/settings/create-new-user"
+                },
+                {
+                    "icon": "mdi-settings mdi-spin",
+                    "title": "Options",
+                    "to": "/settings/options"
+                }
+            ]
         }
     ]
 }

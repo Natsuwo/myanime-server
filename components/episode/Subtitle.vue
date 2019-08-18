@@ -18,7 +18,7 @@
         <v-avatar left>
           <v-img :src="data.item.value"></v-img>
         </v-avatar>
-        {{ data.item.key }}{{ selected(subtitle) }}
+        {{ data.item.key }}
       </v-chip>
     </template>
     <template v-slot:item="data">
@@ -42,24 +42,24 @@ export default {
   data() {
     return {
       subtitle: []
-    };
+    }
   },
   computed: {
     dataSubtitle() {
       return this.$store.state.term.terms.filter(x => x.type === "language");
     }
+  }, 
+  created() {
+    if (this.data) this.subtitle = this.data;
   },
   methods: {
     remove(item) {
       this.subtitle = [];
-    },
-    selected(data) {
-      this.$emit("episodeSubtitleEmit", data);
     }
   },
   watch: {
-    data() {
-      this.subtitle = this.data;
+    subtitle(val) {
+      this.$emit("episodeSubtitleEmit", val);
     }
   }
 };

@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { get } from "@/services/Episode";
+import { get, removeEpisode } from "@/services/Episode";
 import headers from "@/items/episodetab.json";
 export default {
   async fetch({ store }) {
@@ -112,10 +112,10 @@ export default {
     async removeEpisode(item) {
       var headers = { "X-User-Session": this.$store.state.auth.userToken };
       var form = {
-        anime_id: item.anime_id,
         episode_id: item.episode_id
       };
-      return this.$store.dispatch("episode/removeEpisode", { headers, form, item });
+      var response = removeEpisode(headers, form);
+      return this.$store.dispatch("episode/removeEpisode", item);
     },
     editEpisode(id) {
       this.$router.push({ path: `edit/${id}` });
