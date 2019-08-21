@@ -15,33 +15,24 @@
                 hint="watch anime online"
                 persistent-hint
               ></v-text-field>
-              <v-autocomplete
-                v-model="form.season"
+              <AutoComplete
+                :model="form.old_season"
                 :items="season"
-                chips
-                label="Current Season"
-                item-text="key"
-                item-value="key"
-              >
-                <template v-slot:selection="data">
-                  <v-chip
-                    :input-value="data.selected"
-                    close
-                    class="chip--select-multi"
-                    @click:close="remove(data.item)"
-                  >{{ data.item.key }}</v-chip>
-                </template>
-                <template v-slot:item="data">
-                  <template v-if="typeof data.item !== 'object'">
-                    <v-list-item-content v-text="data.item"></v-list-item-content>
-                  </template>
-                  <template v-else>
-                    <v-list-item-content>
-                      <v-list-item-title v-html="data.item.key"></v-list-item-title>
-                    </v-list-item-content>
-                  </template>
-                </template>
-              </v-autocomplete>
+                :label="'Old Season'"
+                @seasonEmit="data => form.old_season = data"
+              />
+              <AutoComplete
+                :model="form.cur_season"
+                :items="season"
+                :label="'Current Season'"
+                @seasonEmit="data => form.cur_season = data"
+              />
+              <AutoComplete
+                :model="form.new_season"
+                :items="season"
+                :label="'New Season'"
+                @seasonEmit="data => form.new_season = data"
+              />
               <v-btn color="primary" @click="update">Update</v-btn>
             </v-col>
           </v-row>
@@ -52,6 +43,7 @@
 </template>
 <script>
 import { getSetting, updateSetting } from "@/services/Settings";
+import AutoComplete from "@/components/modules/AutoComplete";
 export default {
   head() {
     return {
@@ -97,6 +89,9 @@ export default {
     remove(item) {
       this.form.season = "";
     }
+  },
+  components: {
+    AutoComplete
   }
 };
 </script>

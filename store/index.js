@@ -5,7 +5,8 @@ const cookieparser = process.server ? require('cookieparser') : undefined
 export const state = () => {
     return {
         signIn: false,
-        flags: []
+        flags: [],
+        isLoading: false
     }
 }
 
@@ -20,7 +21,11 @@ export const mutations = {
     },
     getFlags(state, payload) {
         state.flags = payload
+    },
+    SET_LOADING(state, isLoading) {
+        state.isLoading = isLoading
     }
+
 }
 export const actions = {
     async nuxtServerInit({ commit, dispatch }, { req }) {
@@ -31,7 +36,8 @@ export const actions = {
             }
             var checkAuth = (await checkUserToken(headers)).data
             if (checkAuth.success) {
-                commit('setAuth', { user_id: checkAuth.user_id, token: checkAuth.token, isLogin: true })
+                commit('setAuth', { user_id: checkAuth.user.user_id, token: checkAuth.token, isLogin: true })
+                dispatch("auth/profileData", checkAuth.user);
             }
             var terms = (await getAll(headers)).data
             dispatch("term/termsData", terms.data)

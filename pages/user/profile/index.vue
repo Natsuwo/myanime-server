@@ -62,13 +62,6 @@
 import { profile, updateProfile } from "@/services/Authentication";
 import Role from "@/items/role.json";
 export default {
-  async fetch({ store }) {
-    var headers = {
-      "X-User-Session": store.state.auth.userToken
-    };
-    var response = (await profile(headers)).data;
-    store.dispatch("auth/profileData", response.data);
-  },
   computed: {
     profile() {
       return this.$store.state.auth.profile;

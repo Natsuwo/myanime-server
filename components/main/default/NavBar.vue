@@ -23,7 +23,7 @@
       <template v-slot:activator="{ on }">
         <v-btn dark icon v-on="on">
           <v-avatar>
-            <v-img src="https://i.imgur.com/N5SvkzK.jpg"></v-img>
+            <v-img :src="avatar"></v-img>
           </v-avatar>
         </v-btn>
       </template>
@@ -59,6 +59,11 @@ export default {
   },
   created() {
     this.$emit("miniEmit", this.mini);
+  },
+  computed: {
+    avatar() {
+      return this.$store.state.auth.profile.avatar;
+    }
   },
   async mounted() {
     this.items = Items.items;

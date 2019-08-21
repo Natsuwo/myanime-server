@@ -31,7 +31,7 @@
         <template v-slot:item.updated_at="{ item }">{{ getTime(item.updated_at) }}</template>
         <template v-slot:item.control="{ item }">
           <v-icon @click="editEpisode(item.episode_id)">mdi-pencil</v-icon>
-          <v-icon @click="removeEpisode(item)">mdi-delete</v-icon>
+          <v-icon @click.ctrl="removeEpisode(item)">mdi-delete</v-icon>
         </template>
       </v-data-table>
     </no-ssr>

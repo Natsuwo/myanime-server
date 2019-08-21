@@ -11,7 +11,7 @@
         </template>
         <template v-slot:item.control="{ item }">
           <v-icon @click="editTerm(item.term_id)">mdi-pencil</v-icon>
-          <v-icon @click="deleteTerm(item)">mdi-delete</v-icon>
+          <v-icon @click.ctrl="deleteTerm(item)">mdi-delete</v-icon>
         </template>
       </v-data-table>
     </no-ssr>
