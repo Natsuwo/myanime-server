@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     terms() {
-      return this.$store.state.term.terms.filter(x => x.type === "studio");
+      return this.$store.state.term.terms.filter(x => x.type === "studio") || [];
     }
   },
   created() {

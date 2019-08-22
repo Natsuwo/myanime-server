@@ -19,17 +19,23 @@ export const actions = {
     },
     async addNew({ commit }, data) {
         var response = await addNew(data.headers, data.formData)
-        commit(ADD, { res: response.data })
+        if (response.data.success) {
+            commit(ADD, { res: response.data })
+        }
         return response.data
     },
     async update({ commit }, data) {
         var response = await update(data.headers, data.formData)
-        commit(UPDATE, { item: data.item, res: response.data })
+        if (response.data.success) {
+            commit(UPDATE, { item: data.item, res: response.data })
+        }
         return response.data
     },
     async deleteTerm({ commit }, data) {
         var response = await deleteTerm(data.headers, data.form)
-        commit(DELETE, { item: data.item, data: response.data })
+        if (response.data.success) {
+            commit(DELETE, { item: data.item, data: response.data })
+        }
         return response.data
     }
 }

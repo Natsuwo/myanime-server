@@ -1,5 +1,6 @@
 <template>
   <v-autocomplete
+    filled
     v-model="genres"
     :items="dataGenres"
     chips
@@ -30,6 +31,7 @@
 </template>
 <script>
 export default {
+  props: ["data"],
   data() {
     return {
       genres: []
@@ -38,13 +40,6 @@ export default {
   computed: {
     animemeta() {
       return this.$store.state.anime.anime.animemeta || "";
-    },
-    data() {
-      return this.animemeta
-        ? this.animemeta
-            .filter(x => x.meta_key === "genre")
-            .map(x => x.meta_value)[0]
-        : "";
     },
     dataGenres() {
       return this.$store.state.term.terms.filter(x => x.type === "genre");
@@ -66,3 +61,4 @@ export default {
   }
 };
 </script>
+

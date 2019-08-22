@@ -27,3 +27,20 @@ export function getAnime(headers) {
 export function removeEpisode(headers, form) {
     return Api(headers).delete('/server/episode/remove-episode', { data: form })
 }
+
+export function addMulti(headers, form) {
+    return Api(headers).post('/server/episode/add-multi', form)
+}
+
+export function getEditMulti(headers, id, type, audio, subtitle, fansub) {
+    var animeQuery = id ? `?anime_id=${id}` : ''
+    var typeQuery = type ? `&type=${type}` : ''
+    var audioQuery = audio ? `&audio=${audio}` : ''
+    var subQuery = subtitle ? `&subtitle=${subtitle}` : ''
+    var fansubQuery = fansub ? `&fansub=${fansub}` : ''
+    return Api(headers).get(`/server/episode/edit-multi${animeQuery}${typeQuery}${audioQuery}${subQuery}${fansubQuery}`)
+}
+
+export function editMulti(headers, form) {
+    return Api(headers).put('/server/episode/edit-multi', form)
+}

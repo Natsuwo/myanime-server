@@ -7,7 +7,11 @@
         </v-toolbar>
         <v-card-text>
           <Anime :data="dataEdit.anime_id" @episodeAnimeEmit="data => dataEdit.anime_id = data" />
-          <v-text-field v-model="dataEdit.source" disabled label="Source"></v-text-field>
+          <v-text-field
+            @change="checkSource(dataEdit.source)"
+            v-model="dataEdit.source"
+            label="Source"
+          ></v-text-field>
           <v-text-field v-model="dataEdit.number" label="Number"></v-text-field>
           <Type :data="dataEdit.type" @episodeTypeEmit="data => dataEdit.type = data" />
           <Audio :data="dataEdit.audio" @episodeAudioEmit="data => dataEdit.audio = data" />
@@ -33,8 +37,7 @@ import Subtitle from "@/components/episode/Subtitle";
 import Fansub from "@/components/episode/Fansub";
 import Anime from "@/components/episode/Anime";
 import { getUpdate, update, removeEpisode } from "@/services/Episode";
-import md5 from "md5";
-import axios from "axios";
+import { getDriveId } from "@/plugins/valid";
 export default {
   async fetch({ store, params, redirect }) {
     var headers = {
@@ -75,6 +78,10 @@ export default {
     this.dataEdit = JSON.parse(JSON.stringify(this.data));
   },
   methods: {
+    checkSource(url) {
+      var id = getDriveId(url);
+      return (this.dataEdit.source = id);
+    },
     async submit() {
       var response = await update(this.headers, this.dataEdit);
       this.$store.commit("snackbar/snackBar", {

@@ -25,7 +25,10 @@ export default {
   data() {
     return {
       dataEdit: {},
-      title: "Edit studio"
+      title: "Edit studio",
+      headers: {
+        "X-User-Session": this.$store.state.auth.userToken
+      }
     };
   },
   computed: {

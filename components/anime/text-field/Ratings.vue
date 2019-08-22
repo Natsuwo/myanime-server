@@ -1,5 +1,6 @@
 <template>
   <v-autocomplete
+    filled
     v-model="ratings"
     :items="dataRatings"
     chips

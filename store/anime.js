@@ -39,7 +39,5 @@ export const mutations = {
             const index = state.animes.animes.indexOf(item);
             if (index >= 0) return state.animes.animes.splice(index, 1); 
         }
-        
-
     }
 }

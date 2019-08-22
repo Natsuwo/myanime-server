@@ -42,6 +42,10 @@ export default {
         headers,
         formData
       });
+      this.$store.commit("snackbar/snackBar", {
+        active: true,
+        message: response
+      });
       if (response.success) {
         setTimeout(() => {
           this.$router.push({

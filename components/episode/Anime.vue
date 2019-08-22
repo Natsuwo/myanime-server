@@ -43,12 +43,18 @@ export default {
   data() {
     return {
       anime: [],
-      dataAnime: []
+      dataAnime: [],
+      rules: {
+        required: v => !!v || "source is required"
+      }
     };
   },
   async created() {
+    var headers = {
+      "X-User-Session": this.$store.state.auth.userToken
+    };
     if (this.data) this.anime = this.data;
-    this.dataAnime = (await getAnime()).data.data;
+    this.dataAnime = (await getAnime(headers)).data.data;
   },
   methods: {
     remove(item) {

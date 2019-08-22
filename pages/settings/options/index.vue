@@ -8,8 +8,9 @@
         <v-card-text>
           <v-row>
             <v-col cols="12" sm="6">
-              <v-text-field v-model="form.site_title" label="Site Title"></v-text-field>
+              <v-text-field filled v-model="form.site_title" label="Site Title"></v-text-field>
               <v-text-field
+                filled
                 v-model="form.descriptions"
                 label="Descriptions"
                 hint="watch anime online"

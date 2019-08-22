@@ -1,5 +1,6 @@
 <template>
   <v-autocomplete
+    filled
     v-model="status"
     :items="dataStatus"
     chips
@@ -38,7 +39,7 @@ export default {
     };
   },
   created() {
-    if(this.data) this.status = this.data
+    if (this.data) this.status = this.data;
   },
   methods: {
     remove() {

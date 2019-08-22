@@ -25,6 +25,11 @@
                     "icon": "mdi-note-plus",
                     "title": "Add new (Anime)",
                     "to": "/admin/anime/add-new"
+                },
+                {
+                    "icon": "mdi-notebook",
+                    "title": "Crawl (Anime)",
+                    "to": "/admin/anime/crawl"
                 }
             ]
         },
@@ -38,9 +43,19 @@
                     "to": "/admin/episode/edit"
                 },
                 {
+                    "icon": "mdi-fountain-pen",
+                    "title": "Edit Multi (Episode)",
+                    "to": "/admin/episode/edit-multi"
+                },
+                {
                     "icon": "mdi-note-plus",
                     "title": "Add new (Episode)",
                     "to": "/admin/episode/add-new"
+                },
+                {
+                    "icon": "mdi-note-multiple",
+                    "title": "Add multi (Episode)",
+                    "to": "/admin/episode/add-multi"
                 }
             ]
         },

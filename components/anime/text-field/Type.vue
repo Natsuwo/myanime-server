@@ -1,5 +1,6 @@
 <template>
   <v-autocomplete
+    filled
     v-model="types"
     :items="dataTypes"
     chips

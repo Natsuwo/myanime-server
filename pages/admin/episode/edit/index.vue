@@ -2,6 +2,7 @@
   <div>
     <h1>{{title}} ({{count}})</h1>
     <v-btn :to="'add-new'" color="primary">Add New</v-btn>
+    <v-btn :to="'add-multi'" color="green">Add Multi</v-btn>
     <div class="text-center">
       <v-pagination @input="onPageChange" v-model="page" :length="length" :total-visible="7"></v-pagination>
       <div class="layout">

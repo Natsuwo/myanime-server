@@ -26,3 +26,7 @@ export function removeTerm(headers, form) {
 export function removeAnime(headers, form) {
     return Api(headers).post('/server/anime/remove-anime', form)
 }
+
+export function crawlAnime(headers, form) {
+    return Api(headers).post('/server/anime/crawl', form)
+}

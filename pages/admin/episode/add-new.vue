@@ -80,11 +80,6 @@ export default {
         }, 1000);
       }
     }
-  },
-  watch: {
-    form(v) {
-      console.log(v);
-    }
   }
 };
 </script>

@@ -25,12 +25,12 @@
         class="elevation-1 my-table"
         hide-default-footer
       >
-      <template v-slot:item.user_id="{ item }">{{ getUser(item.user_id) }}</template>
-      <template v-slot:item.created_at="{ item }">{{ getTime(item.created_at) }}</template>
-       <template v-slot:item.control="{ item }">
-        <!-- <v-icon @click="editAnime(item.anime_id)">mdi-pencil</v-icon> -->
-        <v-icon @click="deleteComments(item)">mdi-delete</v-icon>
-      </template>
+        <template v-slot:item.user_id="{ item }">{{ getUser(item.user_id) }}</template>
+        <template v-slot:item.created_at="{ item }">{{ getTime(item.created_at) }}</template>
+        <template v-slot:item.control="{ item }">
+          <!-- <v-icon @click="editAnime(item.anime_id)">mdi-pencil</v-icon> -->
+          <v-icon @click="deleteComment(item)">mdi-delete</v-icon>
+        </template>
       </v-data-table>
     </no-ssr>
     <div class="text-center pt-4">
@@ -40,7 +40,8 @@
 </template>
 
 <script>
-import { getComments } from "@/services/Comment";
+import { getComments, removeComment } from "@/services/Comment";
+import { mapMutations } from "vuex";
 export default {
   async fetch({ store }) {
     var headers = {
@@ -75,6 +76,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations("comment", ["removeComment"]),
     getUser(id) {
       var user = this.users.find(x => x.user_id === id);
       return user.username;
@@ -92,18 +94,18 @@ export default {
       }
       return expired;
     },
-    deleteComments() {
-      // this.$store.commit("snackbar/snackBar", {
-      //   active: true,
-      //   message: messages
-      // });
-      // const index = this.animes.indexOf(item);
-      // if (index >= 0) this.animes.splice(index, 1);
-      // var form = {
-      //   anime_id: item.anime_id
-      // };
-      // await AnimeServices.removeAnime(form);
-      // this.count--;
+    async deleteComment(item) {
+      var headers = {
+        "X-User-Session": this.$store.state.auth.userToken
+      };
+      var response = await removeComment(headers, item);
+      if (response.data.success) {
+        this.removeComment(item);
+      }
+      this.$store.commit("snackbar/snackBar", {
+        active: true,
+        message: response.data
+      });
     }
   },
   head() {

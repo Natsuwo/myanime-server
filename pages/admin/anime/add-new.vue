@@ -10,17 +10,17 @@
           <v-file-input v-model="thumbnail" type="file" accept="image/*" label="Thumbnail"></v-file-input>
           <img :src="coverUrl" height="150" v-if="coverUrl" />
           <v-file-input v-model="cover" type="file" accept="image/*" label="Cover"></v-file-input>
-          <v-text-field v-model="formData.title" label="Romaji Title"></v-text-field>
-          <v-text-field v-model="formData.en" label="English Title"></v-text-field>
-          <v-text-field v-model="formData.jp" label="Japan Title"></v-text-field>
-          <v-text-field v-model="formData.premiered" label="Premiered"></v-text-field>
-          <Seasons @seasonEmit="(data) => formData.season = data" />
+          <v-text-field filled v-model="formData.title" label="Romaji Title"></v-text-field>
+          <v-text-field filled v-model="formData.en" label="English Title"></v-text-field>
+          <v-text-field filled v-model="formData.jp" label="Japan Title"></v-text-field>
+          <v-text-field filled v-model="formData.premiered" label="Premiered"></v-text-field>
+          <v-text-field filled v-model="formData.studios" label="Studios"></v-text-field>
+          <v-text-field filled v-model="formData.season" label="Season"></v-text-field>
           <Type @typeEmit="(data) => formData.type = data" />
           <Status @statusEmit="(data) => formData.status = data" />
           <Genres @genresEmit="(data) => formData.genres = data" />
-          <Studios @studioEmit="(data) => formData.studios = data" />
           <Ratings @ratingEmit="(data) => formData.rating = data" />
-          <v-textarea v-model="formData.description" name="input-7-1" label="Descriptions"></v-textarea>
+          <v-textarea filled v-model="formData.description" name="input-7-1" label="Descriptions"></v-textarea>
           <v-btn color="primary" @click="sumbit">Submit</v-btn>
         </v-card-text>
       </v-card>
@@ -30,17 +30,13 @@
 <script>
 import { addNew } from "@/services/Anime";
 import Genres from "@/components/anime/text-field/Genres";
-import Studios from "@/components/anime/text-field/Studios";
 import Ratings from "@/components/anime/text-field/Ratings";
-import Seasons from "@/components/anime/text-field/Seasons";
 import Type from "@/components/anime/text-field/Type";
 import Status from "@/components/anime/text-field/Status";
 export default {
   components: {
     Genres,
-    Studios,
     Ratings,
-    Seasons,
     Type,
     Status
   },
@@ -69,6 +65,10 @@ export default {
       formData.append("cover", this.cover);
       formData.append("data", JSON.stringify(this.formData));
       var response = await addNew(headers, formData);
+      this.$store.commit("snackbar/snackBar", {
+        active: true,
+        message: response.data
+      });
 
       if (response.data.success) {
         setTimeout(() => {

@@ -9,7 +9,7 @@
           <v-card-text>
             <v-text-field v-model="key" label="Name" prepend-icon="mdi-format-title"></v-text-field>
             <img :src="imageUrl" height="150" v-if="imageUrl" />
-            <v-file-input v-model="value" type="file" accept="image/*" label="Avatar"></v-file-input>
+            <v-file-input v-model="value" type="file" accept="image/*" label="Flag"></v-file-input>
             <v-textarea
               v-model="description"
               prepend-icon="mdi-file-document-edit"
@@ -49,10 +49,13 @@ export default {
       formData.append("key", this.key);
       formData.append("value", this.value);
       formData.append("description", this.description);
-
       var response = await this.$store.dispatch("term/addNew", {
         headers,
         formData
+      });
+      this.$store.commit("snackbar/snackBar", {
+        active: true,
+        message: response
       });
       if (response.success) {
         setTimeout(() => {
