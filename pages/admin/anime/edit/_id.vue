@@ -30,17 +30,8 @@
           <v-divider></v-divider>
         </v-card-text>
         <v-card-actions>
-          <v-switch
-            v-model="autoUpdate"
-            :disabled="isUpdating"
-            class="mt-0"
-            color="green lighten-2"
-            hide-details
-            label="Auto Update"
-          ></v-switch>
           <v-spacer></v-spacer>
-          <v-btn :disabled="autoUpdate" :loading="isUpdating" color="primary" @click="sumbit(true)">
-            <span class="pr-1" v-if="autoUpdate">{{ countDown }}</span>
+          <v-btn :loading="isUpdating" color="primary" @click="sumbit(true)">
             <v-icon left>mdi-update</v-icon>Update now
           </v-btn>
           <v-btn color="error" @click="deletePost()">Delete</v-btn>
@@ -103,7 +94,6 @@ export default {
       coverUrl: "",
       editImage: false,
       editCover: false,
-      autoUpdate: true,
       isUpdating: false,
       countDown: 30,
       headers: {
@@ -114,7 +104,7 @@ export default {
   created() {
     if (this.anime) {
       this.imageUrl = this.anime.thumbnail;
-      this.coverUrl = this.anime.cover;
+      this.coverUrl = this.anime.cover || "";
       this.editData = JSON.parse(JSON.stringify(this.anime));
       this.editData.jp =
         this.animemeta
@@ -129,9 +119,6 @@ export default {
     } else {
       return this.$router.push({ path: "/admin" });
     }
-  },
-  mounted() {
-    this.autoupdate();
   },
   methods: {
     async sumbit() {
@@ -171,19 +158,6 @@ export default {
           this.$router.push({ path: "/admin/anime/edit" });
         }, 1000);
       }
-    },
-    autoupdate() {
-      var timerId = setInterval(() => {
-        if (!this.autoUpdate) {
-          clearTimeout(timerId);
-        }
-        if (this.countDown === 0) {
-          this.sumbit(false);
-          this.countDown = 30;
-        } else {
-          this.countDown--;
-        }
-      }, 1000);
     }
   },
   watch: {
@@ -192,9 +166,6 @@ export default {
     },
     coverUrl() {
       this.editCover = true;
-    },
-    autoUpdate(val) {
-      if (val) this.autoupdate();
     },
     thumbnail(file) {
       if (file && file.length === undefined) {
@@ -220,9 +191,6 @@ export default {
         this.coverUrl = "";
       }
     }
-  },
-  destroyed() {
-    this.autoUpdate = false;
   }
 };
 </script>
