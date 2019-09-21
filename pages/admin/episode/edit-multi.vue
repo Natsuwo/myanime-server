@@ -40,7 +40,7 @@
                 <v-divider class="py-4" />
               </div>
               <v-btn @click="isSubmit = !isSubmit" color="error">Go Back</v-btn>
-              <v-btn @click="submit" color="primary">Submit</v-btn>
+              <v-btn @click="submit" :loading="loading" :disabled="loading" color="primary">Submit</v-btn>
             </div>
           </v-form>
         </v-card-text>
@@ -78,6 +78,7 @@ export default {
       isEditAll: false,
       isSource: true,
       valid: true,
+      loading: false,
       rules: {
         number: v => /^[0-9]+$/.test(v) || "Number Only",
         required: v => !!v || "source is required",
@@ -99,6 +100,7 @@ export default {
       if (!this.$refs.form.validate()) {
         return;
       }
+      this.loading = true
       var response = await editMulti(this.headers, {
         lists: this.lists
       });
@@ -106,6 +108,7 @@ export default {
         active: true,
         message: response.data
       });
+      this.loading = false
       if (response.data.success) {
         return this.$router.push({ path: "/admin/episode/edit" });
       }

@@ -16,6 +16,7 @@
   </v-layout>
 </template>
 <script>
+import { mapMutations } from "vuex";
 export default {
   head() {
     return {
@@ -44,13 +45,15 @@ export default {
     this.imageUrl = this.dataEdit.value;
   },
   methods: {
+    ...mapMutations("snackbar", ["snackBar"]),
     async submit() {
       var formData = { data: JSON.stringify(this.dataEdit) };
-      await this.$store.dispatch("term/update", {
+      var resp = await this.$store.dispatch("term/update", {
         item: this.term,
         headers: this.headers,
         formData
       });
+      this.snackBar({ active: true, message: resp });
     },
     async deleteTerm() {
       var form = { type: "season", term_id: this.$route.params.id };

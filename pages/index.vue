@@ -20,7 +20,7 @@
           :rules="[rules.required, rules.sixNumber, rules.max, rules.number]"
           v-model="pin"
           type="password"
-          maxLength="6"
+          maxlength="6"
           label="Pin"
           prepend-icon="mdi-lock"
         ></v-text-field>
@@ -86,6 +86,10 @@ export default {
           isLogin: true,
           token: login.access,
           user_id: login.user.user_id
+        });
+        this.$router.go({
+          path: "/a/1",
+          force: true
         });
         return this.$router.push({ path: "/admin" });
       }

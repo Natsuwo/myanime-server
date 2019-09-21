@@ -1,21 +1,21 @@
 import Api from './Api'
 
 export function signUp(headers, form) {
-    return Api(headers).post('/server/auth/sign-up', form);
+    return Api(headers).post('/auth/sign-up', form);
 }
 
 export function profile(headers) {
-    return Api(headers).get('/server/setting/profile');
+    return Api(headers).get('/setting/profile');
 }
 
 export function updateProfile(headers, form) {
-    return Api(headers).put('/server/setting/profile', form);
+    return Api(headers).put('/setting/profile', form);
 }
 
 export function signIn(headers, form) {
-    return Api(headers).post('/server/auth/sign-in', form)
+    return Api(headers).post('/auth/sign-in', form)
 }
 
 export function checkUserToken(headers) {
-    return Api(headers).post('/server/auth/check-user-token')
+    return Api(headers).post('/auth/check-user-token')
 }

@@ -17,7 +17,7 @@
             label="Descriptions"
             prepend-icon="mdi-file-document-edit"
           ></v-textarea>
-          <v-btn @click="submit" color="primary">Update</v-btn>
+          <v-btn :loading="loading" :disabled="loading" @click="submit" color="primary">Update</v-btn>
           <v-btn @click="deleteTerm(term)" color="error">Delete</v-btn>
         </v-card-text>
       </v-card>
@@ -26,6 +26,7 @@
 </template>
 <script>
 import { update } from "@/services/Term";
+import { mapMutations } from "vuex";
 export default {
   head() {
     return {
@@ -37,6 +38,7 @@ export default {
       dataEdit: {},
       avatar: [],
       imageUrl: "",
+      loading: false,
       title: "Edit fansub",
       headers: { "X-User-Session": this.$store.state.auth.userToken }
     };
@@ -54,16 +56,19 @@ export default {
     this.imageUrl = this.dataEdit.value;
   },
   methods: {
+    ...mapMutations("snackbar", ["snackBar"]),
     async submit() {
+      this.loading = true;
       var formData = new FormData();
       formData.append("data", JSON.stringify(this.dataEdit));
       formData.append("value", this.avatar.size ? this.avatar : this.imageUrl);
-
-      await this.$store.dispatch("term/update", {
+      var resp = await this.$store.dispatch("term/update", {
         item: this.term,
         headers: this.headers,
         formData
       });
+      this.snackBar({ active: true, message: resp });
+      this.loading = false;
     },
     async deleteTerm(item) {
       var form = {

@@ -1,9 +1,9 @@
 import Api from './Api'
 
 export function getComments(headers) {
-    return Api(headers).get('/server/comment/get')
+    return Api(headers).get('/comment/get')
 }
 
 export function removeComment(headers, form) {
-    return Api(headers).delete('/server/comment/remove', { data: form })
+    return Api(headers).delete('/comment/remove', { data: form })
 }

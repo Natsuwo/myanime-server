@@ -2,6 +2,7 @@
     {
         "text": "Anime",
         "value": "anime_title",
+        "width": "350px",
         "sortable": true,
         "align": "left"
     },
@@ -14,6 +15,7 @@
     {
         "text": "Title",
         "value": "title",
+        "width": "350px",
         "sortable": false,
         "align": "left"
     },

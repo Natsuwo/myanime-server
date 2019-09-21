@@ -19,7 +19,7 @@
             <Subtitle @episodeSubtitleEmit="data => form.subtitle = data" />
             <Fansub @episodeFansubEmit="data => form.fansub = data" />
             <v-text-field v-model="form.title" label="Title"></v-text-field>
-            <v-btn @click="submit" color="primary">Submit</v-btn>
+            <v-btn @click="submit" :loading="loading" :disabled="loading" color="primary">Submit</v-btn>
           </v-form>
         </v-card-text>
       </v-card>
@@ -34,6 +34,7 @@ import Fansub from "@/components/episode/Fansub";
 import Anime from "@/components/episode/Anime";
 import { addNew } from "@/services/Episode";
 import { isValid } from "@/plugins/valid";
+import { mapMutations } from "vuex";
 export default {
   components: {
     Type,
@@ -52,6 +53,7 @@ export default {
       titleHead: "Add new (Episode)",
       form: {},
       valid: true,
+      loading: false,
       rules: {
         number: v => /^[0-9]+$/.test(v) || "Number Only",
         required: v => !!v || "source is required",
@@ -60,18 +62,18 @@ export default {
     };
   },
   methods: {
+    ...mapMutations("snackbar", ["snackBar"]),
     async submit() {
       if (!this.$refs.form.validate()) {
         return;
       }
+      this.loading = true;
       var headers = {
         "X-User-Session": this.$store.state.auth.userToken
       };
       var response = await addNew(headers, this.form);
-      this.$store.commit("snackbar/snackBar", {
-        active: true,
-        message: response.data
-      });
+      this.snackBar({ active: true, message: response.data });
+      this.loading = false;
       if (response.data.success) {
         setTimeout(() => {
           this.$router.push({

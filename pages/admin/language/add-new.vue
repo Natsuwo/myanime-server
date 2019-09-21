@@ -16,7 +16,7 @@
               name="input-7-1"
               label="Descriptions"
             ></v-textarea>
-            <v-btn @click="submit" color="primary">Submit</v-btn>
+            <v-btn @click="submit" :loading="loading" :disabled="loading" color="primary">Submit</v-btn>
           </v-card-text>
         </v-form>
       </v-card>
@@ -24,6 +24,7 @@
   </v-layout>
 </template>
 <script>
+import { mapMutations, mapActions } from "vuex";
 export default {
   head() {
     return {
@@ -36,27 +37,26 @@ export default {
       value: [],
       description: "",
       imageUrl: "",
+      loading: false,
       title: "Add new (Language)"
     };
   },
   methods: {
+    ...mapMutations("snackbar", ["snackBar"]),
+    ...mapActions("term", ["addNew"]),
     async submit() {
       var headers = {
         "X-User-Session": this.$store.state.auth.userToken
       };
+      this.loading = true;
       var formData = new FormData();
       formData.append("type", "language");
       formData.append("key", this.key);
       formData.append("value", this.value);
       formData.append("description", this.description);
-      var response = await this.$store.dispatch("term/addNew", {
-        headers,
-        formData
-      });
-      this.$store.commit("snackbar/snackBar", {
-        active: true,
-        message: response
-      });
+      var response = await this.addNew({ headers, formData });
+      this.snackBar({ active: true, message: response });
+      this.loading = false;
       if (response.success) {
         setTimeout(() => {
           this.$router.push({

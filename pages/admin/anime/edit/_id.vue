@@ -122,9 +122,9 @@ export default {
   },
   methods: {
     async sumbit() {
+      this.isUpdating = true;
       var formData = new FormData();
       var anime_id = this.$route.params.id;
-
       formData.append(
         "thumbnail",
         this.thumbnail.size ? this.thumbnail : this.imageUrl
@@ -136,7 +136,6 @@ export default {
         active: true,
         message: response.data
       });
-      this.isUpdating = true;
 
       if (response) {
         setTimeout(() => {

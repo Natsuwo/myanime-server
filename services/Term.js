@@ -1,17 +1,17 @@
 import Api from './Api'
 
 export function getAll(headers) {
-    return Api(headers).get(`/server/term/get`)
+    return Api(headers).get(`/term/get`)
 }
 
 export function addNew(headers, form) {
-    return Api(headers).post('/server/term/post', form)
+    return Api(headers).post('/term/post', form)
 }
 
 export function update(headers, form) {
-    return Api(headers).put('/server/term/update', form)
+    return Api(headers).put('/term/update', form)
 }
 
 export function deleteTerm(headers, form) {
-    return Api(headers).delete('/server/term/delete', { data: form })
+    return Api(headers).delete('/term/delete', { data: form })
 }

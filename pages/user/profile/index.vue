@@ -39,7 +39,13 @@
                 />
               </v-flex>
               <v-flex xs12 text-right>
-                <v-btn class="mx-0" @click="updateProfile" color="green darken-4">Update Profile</v-btn>
+                <v-btn
+                  :loading="loading"
+                  :disabled="loading"
+                  class="mx-0"
+                  @click="updateProfile"
+                  color="green darken-4"
+                >Update Profile</v-btn>
               </v-flex>
             </v-layout>
           </v-container>
@@ -60,6 +66,7 @@
 </template>
 <script>
 import { profile, updateProfile } from "@/services/Authentication";
+import { mapMutations } from "vuex";
 import Role from "@/items/role.json";
 export default {
   computed: {
@@ -77,6 +84,7 @@ export default {
       avatar: [],
       avatarUrl: "",
       form: {},
+      loading: false,
       pinRules: [
         v => !v || v.length >= 6 || "Must required 6 numbers",
         v => !v || v.length <= 6 || "Max 6 numbers",
@@ -92,10 +100,12 @@ export default {
     this.avatarUrl = this.profile.avatar;
   },
   methods: {
+    ...mapMutations("snackbar", ["snackBar"]),
     async updateProfile() {
       var headers = {
         "X-User-Session": this.$store.state.auth.userToken
       };
+      this.loading = true;
       var formData = new FormData();
       formData.append("form", JSON.stringify(this.form));
       formData.append(
@@ -103,10 +113,8 @@ export default {
         this.avatar.size ? this.avatar : this.avatarUrl
       );
       var response = (await updateProfile(headers, formData)).data;
-      this.$store.commit("snackbar/snackBar", {
-        active: true,
-        message: response
-      });
+      this.snackBar({ active: true, message: response });
+      this.loading = false
     }
   },
   watch: {
