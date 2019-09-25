@@ -23,6 +23,16 @@ async function newUpdate(newData, multi) {
     await fs.writeFileSync('../newupload.json', JSON.stringify(data), { encoding: 'utf8' })
 }
 
+async function updateThumb(episode_id, thumbnail) {
+    var data = await fs.readFileSync('../newupload.json', { encoding: 'utf8' })
+    var oldData = JSON.parse(data)
+    var index = oldData.findIndex(x => x.episode_id === episode_id)
+    if (index > -1) {
+        oldData[index].thumbnail = thumbnail
+        await fs.writeFileSync('../newupload.json', JSON.stringify(oldData), { encoding: 'utf8' })
+    }
+}
+
 async function addtoDrstream(drive_id) {
     var drdomain = process.env.DRDOMAIN
     var endpoint = drdomain + "/api/v2/hls-drive/add-new"
@@ -191,11 +201,21 @@ module.exports = {
                 var episode_id = episode.episode_id
                 if (!oldThumb || oldThumb === 'https://cdn.discordapp.com/attachments/624559812054876181/624560031475433482/Fix_Error_Code_6602-720x340.jpeg') {
                     await Episode.updateOne({ episode_id }, { thumbnail })
+                    await updateThumb(episode_id, thumbnail)
                 }
             }
             res.send({ success: true, message: "You got this." })
         } catch (err) {
             res.send({ success: false, error: err.message })
+        }
+    },
+    async findEp(req, res) {
+        try {
+            var { skip } = req.query
+            var episode = await Episode.findOne().skip(parseInt(skip)).sort({ created_at: -1 })
+            res.send({ success: true, episode })
+        } catch (err) {
+            res.send({ succes: false, error: err.message })
         }
     }
 }
