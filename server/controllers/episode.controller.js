@@ -1,4 +1,5 @@
 const fs = require('fs')
+const axios = require('axios')
 const Anime = require('../models/Anime')
 const Episode = require('../models/Episode')
 const Comment = require('../models/Comment')
@@ -20,6 +21,14 @@ async function newUpdate(newData, multi) {
         data.splice(12, 1)
     }
     await fs.writeFileSync('../newupload.json', JSON.stringify(data), { encoding: 'utf8' })
+}
+
+async function addtoDrstream(drive_id) {
+    var drdomain = process.env.DRDOMAIN
+    var endpoint = drdomain + "/api/v2/hls-drive/add-new"
+    var user_id = process.env.DRUSER
+    var secret_token = process.env.DRTOKEN
+    await axios.post(endpoint + `?user_id=${user_id}&secret_token=${secret_token}&drive_id=${drive_id}&setPremium=true`)
 }
 
 async function deleteUpdate(episode_id) {
@@ -84,6 +93,7 @@ module.exports = {
             if (!thumbnail) thumbnail = ''
             var episodeCreate = await Episode.create({ anime_id, title, source, number, description, type, audio, subtitle, fansub, thumbnail })
             await newUpdate(episodeCreate, false)
+            await addtoDrstream(source)
             var episode_id = episodeCreate.episode_id
             return res.send({ success: true, episode_id, message: "Added." })
         } catch (err) {
@@ -106,6 +116,7 @@ module.exports = {
             var { episode_id, anime_id, title, number, type, audio, subtitle, fansub, source } = req.body
             var { thumbnail } = res.locals
             await Episode.updateOne({ episode_id }, { anime_id, title, number, thumbnail, type, audio, subtitle, fansub, source })
+            await addtoDrstream(source)
             return res.send({ success: true, message: 'Edited.' })
         } catch (err) {
             res.send({ success: false, error: err.message })
@@ -135,6 +146,7 @@ module.exports = {
                 var number = item.ep
                 var thumbnail = item.thumbnail || 'https://cdn.discordapp.com/attachments/624579939471196180/624899350916759593/Fix_Error_Code_6602-720x340.jpeg'
                 episodeCreate = await Episode.create({ anime_id, type, audio, subtitle, fansub, source, title, number, thumbnail })
+                await addtoDrstream(source)
             }
             var totalEp = lists.length
             var startEp = lists[0].ep
@@ -163,8 +175,25 @@ module.exports = {
             for (var item of lists) {
                 var { episode_id, anime_id, type, audio, subtitle, fansub, source, title, number } = item
                 await Episode.updateOne({ episode_id }, { source, title, anime_id, number, type, audio, subtitle, fansub })
+                await addtoDrstream(source)
             }
             res.send({ success: true, message: "You edited." })
+        } catch (err) {
+            res.send({ success: false, error: err.message })
+        }
+    },
+    async addThumb(req, res) {
+        try {
+            var { thumbnail, source } = req.body
+            var episodes = await Episode.find({ source })
+            for (var episode of episodes) {
+                var oldThumb = episode.thumbnail
+                var episode_id = episode.episode_id
+                if (!oldThumb || oldThumb === 'https://cdn.discordapp.com/attachments/624559812054876181/624560031475433482/Fix_Error_Code_6602-720x340.jpeg') {
+                    await Episode.updateOne({ episode_id }, { thumbnail })
+                }
+            }
+            res.send({ success: true, message: "You got this." })
         } catch (err) {
             res.send({ success: false, error: err.message })
         }

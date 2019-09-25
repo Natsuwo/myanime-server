@@ -45,7 +45,6 @@ module.exports = {
             var get = await axios
                 .get('https://discordapp.com/api/channels/' + randChannel + '/messages/' + resp.id)
                 .catch(err => {
-                    console.log(err.message)
                     thumbnail = 'https://cdn.discordapp.com/attachments/624579939471196180/624899350916759593/Fix_Error_Code_6602-720x340.jpeg'
                     res.locals.thumbnail = thumbnail
                     return next()
@@ -70,7 +69,8 @@ module.exports = {
                 var get = await axios
                     .get('https://discordapp.com/api/channels/' + randChannel + '/messages/' + resp.id)
                     .catch(err => {
-                        thumbnail = 'https://cdn.discordapp.com/attachments/624579939471196180/624899350916759593/Fix_Error_Code_6602-720x340.jpeg'
+                        item['thumbnail'] = 'https://cdn.discordapp.com/attachments/624579939471196180/624899350916759593/Fix_Error_Code_6602-720x340.jpeg'
+                        newLists.push(item)
                     })
                 item['thumbnail'] = get.data.attachments[0].url
                 newLists.push(item)

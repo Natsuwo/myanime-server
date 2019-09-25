@@ -2,7 +2,8 @@ const { Router } = require('express')
 const route = Router()
 const { validateDrive, beforeAddMulti } = require('../middlewares/episode.middleware')
 const { getThumbnail, getThumbnails } = require('../middlewares/upimg.middleware')
-const { get, getAnime, post, getUpdate, update, removeEpisode, addMulti, getEditMulti, editMulti } = require('../controllers/episode.controller')
+const { get, getAnime, post, getUpdate, update,
+    removeEpisode, addMulti, getEditMulti, editMulti, addThumb } = require('../controllers/episode.controller')
 const { checkSecure, isUserLogin } = require('../validate/secure.validate')
 
 route.get('/episode/get', checkSecure, isUserLogin, get)
@@ -15,5 +16,6 @@ route.post('/episode/post', checkSecure, isUserLogin, validateDrive, getThumbnai
 // route.post('/episode/postEx', validateDrive, getThumbnail, post)
 route.post('/episode/add-multi', checkSecure, isUserLogin, beforeAddMulti, getThumbnails, addMulti)
 route.delete('/episode/remove-episode', checkSecure, isUserLogin, removeEpisode)
+route.put('/episode/add-thumb', addThumb)
 
 module.exports = route
