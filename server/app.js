@@ -42,6 +42,6 @@ module.exports = (rootDir) => {
         }
         next()
     })
-
+    
     return app;
 }
