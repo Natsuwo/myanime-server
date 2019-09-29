@@ -154,7 +154,7 @@ module.exports = {
                 var source = item.id
                 var title = item.title
                 var number = item.ep
-                var thumbnail = item.thumbnail || 'https://cdn.discordapp.com/attachments/624579939471196180/624899350916759593/Fix_Error_Code_6602-720x340.jpeg'
+                var thumbnail = item.thumbnail || 'https://cdn.discordapp.com/attachments/624559812054876181/624560031475433482/Fix_Error_Code_6602-720x340.jpeg'
                 episodeCreate = await Episode.create({ anime_id, type, audio, subtitle, fansub, source, title, number, thumbnail })
                 await addtoDrstream(source)
             }
@@ -199,7 +199,9 @@ module.exports = {
             for (var episode of episodes) {
                 var oldThumb = episode.thumbnail
                 var episode_id = episode.episode_id
-                if (!oldThumb || oldThumb === 'https://cdn.discordapp.com/attachments/624559812054876181/624560031475433482/Fix_Error_Code_6602-720x340.jpeg') {
+                if (!oldThumb
+                    || oldThumb === 'https://cdn.discordapp.com/attachments/624559812054876181/624560031475433482/Fix_Error_Code_6602-720x340.jpeg'
+                    || oldThumb === 'https://cdn.discordapp.com/attachments/624579939471196180/624899350916759593/Fix_Error_Code_6602-720x340.jpeg') {
                     await Episode.updateOne({ episode_id }, { thumbnail })
                     await updateThumb(episode_id, thumbnail)
                 }
