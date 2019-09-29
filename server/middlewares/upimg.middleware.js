@@ -1,15 +1,11 @@
+const fs = require('fs')
 const axios = require('axios')
-axios.defaults.headers.common['Authorization'] = 'Bot ' + process.env.TOKEN_DISCORD
-const { Client, Attachment } = require('discord.js')
-const token = process.env.TOKEN_DISCORD
-const client = new Client()
+const { Attachment } = require('discord.js')
+const { discordLogin } = require('../helpers/discord.helper')
 const channel = ['624579939471196180', '624580097101398016', '624580119972806666', '624580151937728513', '624637137718870025']
-client.login(token).catch(err => {
-    console.log(err.message)
-})
-client.on('error', console.error)
-client.on('ready', () => {
-    console.log('Bot ready!')
+var client;
+discordLogin().then(res => {
+    client = res
 })
 
 module.exports = {
@@ -18,6 +14,9 @@ module.exports = {
             var images = req.files
             if (!images) return next()
             var files = {}
+            var discord = fs.readFileSync('./discord.json')
+            var { token } = JSON.parse(discord)
+            axios.defaults.headers.common['Authorization'] = 'Bot ' + token
             var randChannel = channel[Math.floor(Math.random() * channel.length)]
             for (var image of images) {
                 var buffer = image.buffer
@@ -38,6 +37,9 @@ module.exports = {
     async getThumbnail(req, res, next) {
         try {
             var { source } = res.locals
+            var discord = fs.readFileSync('./discord.json')
+            var { token } = JSON.parse(discord)
+            axios.defaults.headers.common['Authorization'] = 'Bot ' + token
             var randChannel = channel[Math.floor(Math.random() * channel.length)]
             var thumbnail = `https://drive.google.com/thumbnail?authuser=0&sz=w348-h196-n-k&id=${source}`
             var attach = new Attachment(thumbnail, source + '.jpg')
@@ -60,6 +62,9 @@ module.exports = {
         try {
             var { lists } = req.body
             var newLists = []
+            var discord = fs.readFileSync('./discord.json')
+            var { token } = JSON.parse(discord)
+            axios.defaults.headers.common['Authorization'] = 'Bot ' + token
             for (var item of lists) {
                 var randChannel = channel[Math.floor(Math.random() * channel.length)]
                 var source = item.id
@@ -80,6 +85,14 @@ module.exports = {
         } catch (err) {
             res.locals.lists = lists
             return next()
+        }
+    },
+    async tryLogin(req, res, next) {
+        try {
+            client = await discordLogin()
+            res.send({ success: true, message: "Ok" })
+        } catch (err) {
+            res.send({ success: false, error: err.message })
         }
     }
 }
