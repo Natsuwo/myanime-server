@@ -16,6 +16,13 @@
                 hint="watch anime online"
                 persistent-hint
               ></v-text-field>
+               <v-text-field
+                filled
+                v-model="form.noti"
+                label="Noti"
+                hint="Fuc' haters!"
+                persistent-hint
+              ></v-text-field>
               <AutoComplete
                 :model="form.old_season"
                 :items="season"

@@ -17,6 +17,5 @@ route.post('/episode/post', checkSecure, isUserLogin, validateDrive, getThumbnai
 route.post('/episode/add-multi', checkSecure, isUserLogin, beforeAddMulti, getThumbnails, addMulti)
 route.delete('/episode/remove-episode', checkSecure, isUserLogin, removeEpisode)
 route.put('/episode/add-thumb', addThumb)
-route.get('/shigure/find-ep', findEp)
 
 module.exports = route

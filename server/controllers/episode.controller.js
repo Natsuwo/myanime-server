@@ -210,14 +210,5 @@ module.exports = {
         } catch (err) {
             res.send({ success: false, error: err.message })
         }
-    },
-    async findEp(req, res) {
-        try {
-            var { skip } = req.query
-            var episode = await Episode.findOne().skip(parseInt(skip)).sort({ created_at: -1 })
-            res.send({ success: true, episode })
-        } catch (err) {
-            res.send({ succes: false, error: err.message })
-        }
     }
 }
