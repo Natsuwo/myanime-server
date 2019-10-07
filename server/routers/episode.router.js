@@ -3,7 +3,7 @@ const route = Router()
 const { validateDrive, beforeAddMulti } = require('../middlewares/episode.middleware')
 const { getThumbnail, getThumbnails } = require('../middlewares/upimg.middleware')
 const { get, getAnime, post, getUpdate, update,
-    removeEpisode, addMulti, getEditMulti, editMulti, addThumb, findEp } = require('../controllers/episode.controller')
+    removeEpisode, addMulti, getEditMulti, editMulti, addThumb } = require('../controllers/episode.controller')
 const { checkSecure, isUserLogin } = require('../validate/secure.validate')
 
 route.get('/episode/get', checkSecure, isUserLogin, get)

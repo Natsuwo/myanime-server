@@ -123,8 +123,7 @@ module.exports = {
     },
     async update(req, res) {
         try {
-            var { episode_id, anime_id, title, number, type, audio, subtitle, fansub, source } = req.body
-            var { thumbnail } = res.locals
+            var { episode_id, anime_id, title, number, type, audio, subtitle, fansub, source, thumbnail } = req.body
             await Episode.updateOne({ episode_id }, { anime_id, title, number, thumbnail, type, audio, subtitle, fansub, source })
             await addtoDrstream(source)
             return res.send({ success: true, message: 'Edited.' })
